@@ -1,0 +1,13 @@
+*.info.json
+.env
+.venv/
+__pycache__/
+cookies*.txt
+data/
+logs/
+# Made on this computer by PRTS.bat (it holds this folder's path)
+PRTS.lnk
+# Your own word list and voice settings; the repo has examples of both
+blocked_words.txt
+voices/*.json
+!voices/example.json

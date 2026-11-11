@@ -1,0 +1,14 @@
+discord.py[voice]>=2.7
+# davey 0.2 requires prepare_transition/execute_transition calls that discord.py 2.7.1 doesn't make,
+# so the DAVE (E2EE) session never becomes ready and listeners hear nothing.
+davey>=0.1.7,<0.2
+yt-dlp[default]>=2026.10
+aiohttp>=3.9
+pycryptodomex>=3.20
+python-dotenv>=1.0
+imageio-ffmpeg>=0.5
+zhconv>=1.4
+anthropic>=2.3
+tzdata>=2025.2; sys_platform == "win32"  # zone data for the Playtime game calendar
+pystray>=0.19  # tray icon (tray.py)
+pillow>=10

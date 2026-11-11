@@ -1,0 +1,27 @@
+{
+  "_note": "Example voice settings for talk mode. Copy to voices/voice.json (or point VOICE_CONFIG at your copy) and fill in your own paths. No model or audio is included in this repository.",
+  "gsv_root": "C:/path/to/GPT-SoVITS",
+  "api": "http://127.0.0.1:9880",
+  "model": {
+    "gpt_weights": "C:/path/to/GPT-SoVITS/GPT_weights_v2ProPlus/your_model-e15.ckpt",
+    "sovits_weights": "C:/path/to/GPT-SoVITS/SoVITS_weights_v2ProPlus/your_model_e8.pth"
+  },
+  "reference": {
+    "audio": "C:/path/to/reference.wav",
+    "text": "参考音频里说的话。",
+    "text_of_clip": "参考音频里说的话。",
+    "lang": "zh"
+  },
+  "synthesis": {
+    "text_split_method": "cut0",
+    "fragment_interval": 0.0,
+    "seed": 1234,
+    "post_filter": "acompressor=threshold=0.063:ratio=2.5:attack=5:release=100:makeup=1.5,loudnorm=I=-13.5:TP=-1.0:LRA=11"
+  },
+  "pauses_seconds": {
+    "period": {"min": 1.0, "max": 1.5, "full_at_chars": 24},
+    "question": {"min": 1.0, "max": 1.5, "full_at_chars": 24},
+    "ellipsis": 2.0,
+    "dash": 0.8
+  }
+}

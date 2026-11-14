@@ -42,14 +42,44 @@ class SpeechError(Exception):
     """A user-facing reason she can't speak."""
 
 
+# Fields talk mode can't work without (voices/example.json shows them all), and the optional
+# ones that must have the right type when present.
+REQUIRED_VOICE_FIELDS = ("gsv_root", "model.gpt_weights", "model.sovits_weights", "reference.audio")
+OPTIONAL_VOICE_TYPES = {"api": str, "synthesis": dict, "pauses_seconds": dict}
+
+
+def voice_config_problem(cfg: object) -> str:
+    """What's wrong with the voice settings, or "" when they're usable."""
+    if not isinstance(cfg, dict):
+        return "the file should hold a JSON object"
+    for field in REQUIRED_VOICE_FIELDS:
+        value: object = cfg
+        for key in field.split("."):
+            value = value.get(key) if isinstance(value, dict) else None
+        if not isinstance(value, str) or not value.strip():
+            return f'"{field}" is missing or empty'
+    for key, kind in OPTIONAL_VOICE_TYPES.items():
+        if key in cfg and not isinstance(cfg[key], kind):
+            return f'"{key}" should be {"text" if kind is str else "an object"}'
+    return ""
+
+
 def load_voice_config() -> dict | None:
+    """The voice settings, or None when the file is missing or unusable (talk mode stays off)."""
+    path = Path(config.VOICE_CONFIG)
     try:
-        cfg = json.loads(Path(config.VOICE_CONFIG).read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+        cfg = json.loads(path.read_text(encoding="utf-8"))
+    except OSError:
+        return None  # no voice settings: talk mode is simply off
+    except ValueError as e:
+        log.warning("Voice settings %s aren't valid JSON: %s", path, e)
+        return None
+    if problem := voice_config_problem(cfg):
+        log.warning("Voice settings %s can't be used: %s (voices/example.json shows the fields)", path, problem)
         return None
     ref = Path(cfg["reference"]["audio"])
     if not ref.is_absolute():
-        ref = Path(config.VOICE_CONFIG).parent / ref
+        ref = path.parent / ref
     cfg["reference"]["audio"] = str(ref)
     if config.VOICE_PROMPT == "clip" and cfg["reference"].get("text_of_clip"):
         cfg["reference"]["text"] = cfg["reference"]["text_of_clip"]

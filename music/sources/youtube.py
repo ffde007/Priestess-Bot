@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import re
+import shutil
 import sys
 import tempfile
 import urllib.parse
@@ -14,6 +16,8 @@ import yt_dlp
 import config
 from music.track import SourceError, Stream, Track
 
+log = logging.getLogger(__name__)
+
 URL_RE = re.compile(r"^https?://([a-z0-9-]+\.)*(youtube\.com|youtu\.be)/", re.I)
 FORMAT = "bestaudio/best"
 VIDEO_ID_RE = re.compile(r"[A-Za-z0-9_-]{11}")
@@ -21,6 +25,9 @@ LIST_ID_RE = re.compile(r"[A-Za-z0-9_-]{2,64}")
 # Only these yt-dlp extractors may run. Anything else (consent or redirect pages, the generic
 # extractor) could make the bot fetch a URL a chat member chose, such as a local service.
 EXTRACTORS = ["youtube", "youtube:tab", "youtube:search"]
+# YouTube's player JS must be solved by a JS runtime; Node is the most common one. Without
+# one, yt-dlp still tries (deprecated, some formats missing) and may stop working any time.
+JS_RUNTIMES = ("node", "deno")
 
 
 def canonical_url(url: str) -> str | None:
@@ -62,11 +69,15 @@ class YouTubeSource:
             "no_warnings": True,
             "noplaylist": False,
             "allowed_extractors": EXTRACTORS,
-            # YouTube's player JS must be solved by a JS runtime; Node is the most common one.
-            "js_runtimes": {"node": {}, "deno": {}},
+            "js_runtimes": {name: {} for name in JS_RUNTIMES},
         }
         if config.YOUTUBE_COOKIES:
             self._base_opts["cookiefile"] = config.YOUTUBE_COOKIES
+        if not any(shutil.which(name) for name in JS_RUNTIMES):
+            log.warning(
+                "Neither Node.js nor Deno was found: YouTube links may fail to play (other sources "
+                "are fine). Install Node.js from https://nodejs.org/ and restart."
+            )
 
     def matches_url(self, url: str) -> bool:
         return bool(URL_RE.match(url))

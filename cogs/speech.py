@@ -275,6 +275,9 @@ class Speech(commands.Cog):
 async def setup(bot: commands.Bot) -> None:
     cog = Speech(bot)
     if not cog.engine.available:
-        log.warning("Voice settings or GPT-SoVITS not found (%s); talk mode disabled.", config.VOICE_CONFIG)
+        if cog.engine.cfg is None:
+            log.warning("No usable voice settings (%s); talk mode disabled.", config.VOICE_CONFIG)
+        else:
+            log.warning("GPT-SoVITS (api_v2.py) not found in %s; talk mode disabled.", cog.engine.cfg["gsv_root"])
         return
     await bot.add_cog(cog)

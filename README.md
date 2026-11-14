@@ -26,7 +26,23 @@
 
 需要 Windows 和 Python 3.10 以上（测试用的是 3.14）。点歌和聊天本身不依赖 Windows，但托盘、`PRTS.bat`、开机自启动和游戏活动日历只能在 Windows 上用。
 
-### 1. 创建 Discord 机器人
+### 1. 下载
+
+在 [Releases](https://github.com/ffde007/Priestess-Bot/releases) 页面下载最新版下面的 **Source code (zip)**，解压到一个固定的文件夹。以后的设置、数据和快捷方式都放在这个文件夹里。
+
+会用 Git 的话，也可以直接克隆：
+
+```bash
+git clone https://github.com/ffde007/Priestess-Bot.git
+```
+
+**以后更新**：先退出机器人，把新版 zip 里的文件复制到原来的文件夹、覆盖旧文件（用 Git 的话就是 `git pull`）。`.env`、`data/` 这些你自己的文件不在压缩包里，不会被覆盖。然后装一次新版的依赖，再启动：
+
+```bash
+.venv\Scripts\python -m pip install -r requirements.txt
+```
+
+### 2. 创建 Discord 机器人
 
 1. 打开 <https://discord.com/developers/applications>，点 **New Application**
 2. 左侧 **Bot** → **Reset Token**，复制 token
@@ -39,7 +55,7 @@
 
 机器人的名字和头像在 **General Information** 和 **Bot** 页设置。
 
-### 2. 配置
+### 3. 配置
 
 ```bash
 copy .env.example .env
@@ -60,7 +76,7 @@ copy .env.example .env
 
 改了 `.env` 之后，从托盘「重新启动」就会读到新的设置。
 
-### 3. 运行
+### 4. 运行
 
 双击 `PRTS.bat`。第一次会自动建好 `.venv`、装好依赖，并在这个文件夹里生成 `PRTS` 快捷方式。
 

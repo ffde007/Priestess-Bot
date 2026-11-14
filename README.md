@@ -120,7 +120,7 @@ python -m venv .venv
 
 ## 点歌
 
-<p align="center"><img src="docs/images/music.png" width="560" alt="「正在聆听」卡片：Eclipse 和塞壬电台随机播放的歌"></p>
+<p align="center"><img src="docs/images/music.png" width="560" alt="「正在聆听」卡片：网易云的 Eclipse、Bilibili 上的感谢庆典印象曲，和塞壬电台随机播放的歌"></p>
 
 用 `/play` 输入歌名搜索，或者直接贴链接（单曲、视频、歌单、专辑、分P视频都行）；也可以 @ 她说「放一首晴天」，见[聊天](#聊天)。
 

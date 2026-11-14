@@ -1,6 +1,8 @@
 <img src="docs/images/priestess.png" align="right" width="140" alt="普瑞赛斯">
 
-# priestess-bot
+# 普瑞赛斯 Priestess-Bot
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white) ![Windows](https://img.shields.io/badge/platform-Windows-0078D6) ![discord.py 2.7](https://img.shields.io/badge/discord.py-2.7-5865F2?logo=discord&logoColor=white)
 
 以《明日方舟》里的**普瑞赛斯**为人设的 Discord 机器人：在语音频道里放歌，@ 她就能聊天。
 
@@ -10,12 +12,12 @@
 - **游戏活动日历**：每晚提醒明日方舟、终末地等游戏快结束的活动，附一张时间轴图；有干员过生日也会提一句。
 - **花钱有数**：常用指令、表情、敏感话题都用写好的台词回应，不调用 API；聊天和搜索每人每天有额度；她只待在你允许的服务器里。
 
-> A Discord music bot for a small private server, with Priestess from *Arknights* as its persona: plays songs from Monster Siren, NetEase Cloud Music, Bilibili and YouTube links, chats through DeepSeek or Claude, posts game event reminders, and can read replies aloud with a local GPT-SoVITS voice. Documentation is in Chinese. Built for Windows.
+<sub>A Discord music bot for a small private server, with Priestess from <i>Arknights</i> as its persona: plays songs from Monster Siren, NetEase Cloud Music, Bilibili and YouTube links, chats through DeepSeek or Claude, posts game event reminders, and can read replies aloud with a local GPT-SoVITS voice. Documentation is in Chinese. Built for Windows.</sub>
 
 > [!NOTE]
 > **非官方粉丝项目**，与鹰角网络（Hypergryph）无关。普瑞赛斯和《明日方舟》的角色、名字、图片版权归鹰角网络所有。代码以 MIT 许可证发布，见[许可证和致谢](#许可证和致谢)。
 
-<p align="center"><img src="docs/images/chat-persona.png" width="720" alt="博士 @ 她问如何看待凯尔希，她用普瑞赛斯的口吻回答"></p>
+<p align="center"><img src="docs/images/chat-persona.png" width="750" alt="博士 @ 她问如何看待凯尔希，她用普瑞赛斯的口吻回答"></p>
 <p align="center"><sub>README 里的截图按真实对话重建，提问的人显示为「博士」。</sub></p>
 
 **目录**：[快速开始](#快速开始) · [命令](#命令) · [点歌](#点歌) · [聊天](#聊天) · [说话模式](#说话模式) · [游戏活动日历](#游戏活动日历) · [常见问题](#常见问题) · [隐私](#隐私) · [许可证和致谢](#许可证和致谢)
@@ -83,20 +85,28 @@ python -m venv .venv
 
 ## 命令
 
+<p align="center"><img src="docs/images/commands.png" width="688" alt="在 Discord 里输入 / 时弹出的普瑞赛斯命令列表"></p>
+
+在 Discord 里输入 `/` 就能看到她的命令，选中之后 Discord 会提示要填的内容。
+
 **点歌**
 
 | 命令 | 作用 |
 | --- | --- |
-| `/play <歌名或链接> [平台] [插队]` | 点歌。贴链接会自动识别平台并直接加入队列；输入歌名会弹出搜索结果列表让你挑（只有你自己看得到） |
-| `/search <关键词> [平台] [插队]` | 和 `/play` 输入歌名时一样，搜索后从下拉菜单里挑 |
-| `/queue [页码]` | 查看队列 |
+| `/play` | 点歌：填歌名或链接，可以指定平台、插队。贴链接会自动识别平台并直接加入队列；输入歌名会弹出搜索结果列表让你挑（只有你自己看得到） |
+| `/search` | 和 `/play` 输入歌名时一样，搜索后从下拉菜单里挑 |
+| `/queue` | 查看队列，可以翻页 |
 | `/nowplaying` | 正在放的歌 |
-| `/skip` `/pause` `/resume` `/stop` | 跳过 / 暂停 / 继续 / 停止并清空队列 |
-| `/loop <关闭/单曲/列表>` | 循环模式 |
-| `/shuffle` `/remove <序号>` | 打乱队列 / 删除某首 |
-| `/volume <0-100>` | 音量 |
+| `/skip` | 跳过这首 |
+| `/pause` | 暂停 |
+| `/resume` | 继续 |
+| `/stop` | 停止并清空队列 |
+| `/loop` | 循环模式：关闭 / 单曲 / 列表 |
+| `/shuffle` | 打乱队列 |
+| `/remove` | 按序号删除某首 |
+| `/volume` | 音量，0–100 |
 | `/leave` | 离开语音频道 |
-| `/电台 [开/关]` | 塞壬电台：队列放完后从塞壬唱片随机接着放（不重复最近 60 首，跳过 Instrumental 版本），「正在播放」卡片会标「塞壬电台」。`/stop` 会把电台一起关掉。聊天里说「开电台」「关电台」，或者「一直放明日方舟的歌吧」也行 |
+| `/电台` | 打开或关闭塞壬电台：队列放完后从塞壬唱片随机接着放（不重复最近 60 首，跳过 Instrumental 版本），「正在播放」卡片会标「塞壬电台」。`/stop` 会把电台一起关掉。聊天里说「开电台」「关电台」，或者「一直放明日方舟的歌吧」也行 |
 
 没有歌在放时，机器人会在 `IDLE_TIMEOUT` 秒后自动离开；频道里没人时 1 分钟后也会离开。
 
@@ -104,8 +114,8 @@ python -m venv .venv
 
 | 命令 | 作用 |
 | --- | --- |
-| `/说话 [开/关]` | 她进入你所在的语音频道，把聊天回复读出来，见[说话模式](#说话模式) |
-| `/活动 [游戏] [范围]` | 查看游戏活动，见[游戏活动日历](#游戏活动日历) |
+| `/说话` | 打开或关闭说话模式：她进入你所在的语音频道，把聊天回复读出来，见[说话模式](#说话模式) |
+| `/活动` | 查看游戏活动，可以指定游戏和范围，见[游戏活动日历](#游戏活动日历) |
 | `/帮助` | 用她的口吻列出能做的事，只有你自己看得到 |
 
 **只有[部署者](#人设)能用**
@@ -114,7 +124,7 @@ python -m venv .venv
 | --- | --- |
 | `/余额` | DeepSeek 余额和花了多少钱，见[用量和花费](#用量和花费) |
 | `/聊天统计` | 今天和最近 7 天每个人的聊天用量，见[用量和花费](#用量和花费) |
-| `/语音模块 [开/关]` | 启动或关闭 GPT-SoVITS，见[说话模式](#说话模式) |
+| `/语音模块` | 启动或关闭 GPT-SoVITS，见[说话模式](#说话模式) |
 | `/同步活动` | 让游时马上重新同步一次活动日历 |
 | `/推送提醒` | 把今天的频道提醒再发一次（比如改了样式想看看效果），不影响每晚的定时提醒 |
 
@@ -124,29 +134,45 @@ python -m venv .venv
 
 **支持的链接**
 
-- **YouTube**：`youtube.com/watch?v=…`、`youtu.be/…`、`youtube.com/shorts/…`、`youtube.com/playlist?list=…`。机器人只取出视频或播放列表的 ID，重新拼成标准链接再交给 yt-dlp，其他形式的 YouTube 链接（跳转页、同意页等）不支持。**YouTube 只能用链接**，不能按歌名搜索（它的搜索结果什么内容都有），`/play` `/search` 的平台里也没有它
-- **Bilibili**：`bilibili.com/video/BV…`（含 `?p=` 分P）、`b23.tv` 短链、直接发 `BV…` 号
-- **网易云**：`music.163.com` 的单曲、歌单、专辑链接，`163cn.tv` 短链
-- **塞壬唱片**：官网的歌曲链接
+| 平台 | 链接 |
+| --- | --- |
+| Bilibili | `bilibili.com/video/BV…`（含 `?p=` 分P）、`b23.tv` 短链、直接发 `BV…` 号 |
+| 网易云 | `music.163.com` 的单曲、歌单、专辑链接，`163cn.tv` 短链 |
+| 塞壬唱片 | 官网的歌曲链接 |
+| YouTube | `youtube.com/watch?v=…`、`youtu.be/…`、`youtube.com/shorts/…`、`youtube.com/playlist?list=…` |
 
-歌单一次最多添加 100 首（`config.py` 里的 `MAX_PLAYLIST_ITEMS`）。
+- 歌单一次最多添加 100 首（`config.py` 里的 `MAX_PLAYLIST_ITEMS`）。
+- **YouTube 只能用链接**，不能按歌名搜索（它的搜索结果什么内容都有），`/play` `/search` 的平台里也没有它。机器人只取出视频或播放列表的 ID，重新拼成标准链接再交给 yt-dlp，其他形式的 YouTube 链接（跳转页、同意页等）不支持。
 
-**按歌名搜索**：同时搜默认平台（`DEFAULT_SOURCE`，默认 Bilibili）和另一个平台（网易云；默认平台是网易云时换成 Bilibili），最多列 8 个结果，每个都标明平台、上传者和时长。少于 30 秒的片段和超过 20 分钟的视频（电影、合集、循环）会被去掉；翻唱、伴奏、教学、现场、乐器演奏这类版本排在后面（除非你搜的词里就带着这些字）。某个平台搜索失败时（比如 B 站偶尔要求人机验证），另一个平台的结果会补上。60 秒内没有选择，列表会自动关闭。指定了平台的话，只搜那个平台。
+**按歌名搜索**
+
+- 同时搜默认平台（`DEFAULT_SOURCE`，默认 Bilibili）和另一个平台（网易云；默认平台是网易云时换成 Bilibili）。指定了平台的话，只搜那个平台。
+- 最多列 8 个结果，每个都标明平台、上传者和时长。60 秒内没有选择，列表会自动关闭。
+- 少于 30 秒的片段和超过 20 分钟的视频（电影、合集、循环）会被去掉；翻唱、伴奏、教学、现场、乐器演奏这类版本排在后面（除非你搜的词里就带着这些字）。
+- 某个平台搜索失败时（比如 B 站偶尔要求人机验证），另一个平台的结果会补上。
 
 ### 塞壬唱片和她的歌
 
-<p align="center"><img src="docs/images/music-siren.png" width="560" alt="塞壬电台随机播放的「正在聆听」卡片，带她的一句话和官方专辑简介"></p>
+<p align="center"><img src="docs/images/music-siren.png" width="632" alt="塞壬电台随机播放的「正在聆听」卡片，带她的一句话和官方专辑简介"></p>
 
 - 塞壬唱片（monster-siren.hypergryph.com）是明日方舟的官方唱片公司，约 900 首歌，官方音源、音质最好、没有地区限制。`/play` 和 `/search` 的平台里可以选「塞壬唱片」。
 - 不选平台按歌名搜时，也会顺带搜塞壬唱片：歌名完全一致（如 `Speed of Light`）时官方版本排在列表最前面；中文译名（如「飞驰如光」）或角色名（如「凯尔希」）搜到的排在最后。
-- 放明日方舟的歌时，「正在播放」卡片里会多一句她的话。和她自己有关的歌是专门写的：**《Eclipse》（Aimer，六周年印象曲，社区公认是她的歌）**、巴别塔OST、慈悲灯塔OST、《离解复合》、孤星OST、众生行记OST、凯尔希的歌（Immutable、Innocence、Skeletal Wings、Before Summer）、WE、Reversed Time、Believing、From Ash to Fire。其他干员曲会说出 MV 角色和相关活动，活动原声会说出活动名。这些都是预先写好的，不调用 API。
 - 塞壬唱片的歌还会显示专辑名和官方专辑简介（播放时从官网读取）。
-- B站 / YouTube 链接里的明日方舟歌曲也能被认出来，前提是标题里带「明日方舟」「塞壬」「Arknights」之类的字样。Eclipse 只要标题里有「Eclipse」和「Aimer」就算。
-- 角色和活动的对应关系来自 PRTS Wiki 的音乐列表，写在 `siren_lore.py` 里，她的专属台词也在那里，可以自己改或者加。
+
+**她的话**：放明日方舟的歌时，「正在播放」卡片里会多一句她的话，都是预先写好的，不调用 API。和她自己有关的歌是专门写的：
+
+- **《Eclipse》**（Aimer，六周年印象曲，社区公认是她的歌）
+- 巴别塔OST、慈悲灯塔OST、《离解复合》、孤星OST、众生行记OST
+- 凯尔希的歌：Immutable、Innocence、Skeletal Wings、Before Summer
+- WE、Reversed Time、Believing、From Ash to Fire
+
+其他干员曲会说出 MV 角色和相关活动，活动原声会说出活动名。B站 / YouTube 链接里的明日方舟歌曲也能被认出来，前提是标题里带「明日方舟」「塞壬」「Arknights」之类的字样；Eclipse 只要标题里有「Eclipse」和「Aimer」就算。
+
+这些对应关系来自 PRTS Wiki 的音乐列表，写在 `siren_lore.py` 里，她的专属台词也在那里，可以自己改或者加。
 
 ### 网易云音乐
 
-<p align="center"><img src="docs/images/music-netease.png" width="560" alt="从网易云播放 Eclipse 的「正在聆听」卡片，带她为自己的歌写的一句话"></p>
+<p align="center"><img src="docs/images/music-netease.png" width="632" alt="从网易云播放 Eclipse 的「正在聆听」卡片，带她为自己的歌写的一句话"></p>
 
 > [!IMPORTANT]
 > 网易云对**中国大陆以外的 IP** 有地区限制，但是按歌曲来的：一部分歌（比如周杰伦的）拿不到播放地址，很多歌（比如孤勇者、Lemon、Shape of You）海外也能正常播放。被限制的原唱还会从搜索结果里被藏起来，排在前面的往往是翻唱。
@@ -181,7 +207,7 @@ python -m venv .venv
 
 ### Bilibili
 
-<p align="center"><img src="docs/images/music-bilibili.png" width="560" alt="从 Bilibili 播放感谢庆典印象曲的「正在聆听」卡片"></p>
+<p align="center"><img src="docs/images/music-bilibili.png" width="632" alt="从 Bilibili 播放感谢庆典印象曲的「正在聆听」卡片"></p>
 
 不登录也能用。偶尔某些关键词搜索会触发 B 站的人机验证，这时机器人会提示，可以：
 
@@ -220,7 +246,7 @@ YouTube 经常改版，如果突然不能播放了，先更新 yt-dlp：
 
 ### 能聊什么
 
-<p align="center"><img src="docs/images/chat-homework.png" width="720" alt="博士让她证明哥德巴赫猜想，她说明这是未解难题，不会编一份假的证明"></p>
+<p align="center"><img src="docs/images/chat-homework.png" width="760" alt="博士让她证明哥德巴赫猜想，她说明这是未解难题，不会编一份假的证明"></p>
 
 - 在任意频道 @普瑞赛斯 说话，她会以角色口吻回复。回复她的消息（默认会 @ 到她）也算。
 - **控制音乐**：「放一首晴天」「跳过这首」「音量调小点」「现在在放什么」都行。点歌时你得在语音频道里。只说歌名时，她会在你的消息下面发一个搜索结果列表，你挑了才会播放（别人点不了你的列表）。
@@ -353,7 +379,7 @@ YouTube 经常改版，如果突然不能播放了，先更新 yt-dlp：
 
 ## 游戏活动日历
 
-<p align="center"><img src="docs/images/calendar.png" width="560" alt="每晚的活动提醒：她的开场白、接下来 3 天结束的活动，和明日方舟的活动时间轴图"></p>
+<p align="center"><img src="docs/images/calendar.png" width="616" alt="每晚的活动提醒：她的开场白、接下来 3 天结束的活动，和明日方舟的活动时间轴图"></p>
 
 活动数据来自 [游时 Playtime](https://github.com/ZhenyuFu039/acg-calendar)（官方公告、PRTS 等来源），支持明日方舟、终末地、碧蓝航线、绝区零、NIKKE。
 

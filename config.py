@@ -81,7 +81,7 @@ CHAT_ENABLED = (CHAT_PROVIDER == "deepseek" and bool(DEEPSEEK_API_KEY)) or (
     CHAT_PROVIDER == "claude" and _has_anthropic_key
 )
 CHAT_MODEL = os.getenv("CHAT_MODEL", "").strip() or (
-    "deepseek-v4-pro" if CHAT_PROVIDER == "deepseek" else "claude-opus-5-5"
+    "deepseek-flash" if CHAT_PROVIDER == "deepseek" else "claude-opus-5-5"
 )
 CHAT_EFFORT = os.getenv("CHAT_EFFORT", "").strip() or "low"
 # Channels where she answers every message, not only @mentions (needs the Message Content intent).

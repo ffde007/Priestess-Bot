@@ -120,8 +120,6 @@ python -m venv .venv
 
 ## 点歌
 
-<p align="center"><img src="docs/images/music.png" width="560" alt="「正在聆听」卡片：网易云的 Eclipse、Bilibili 上的感谢庆典印象曲，和塞壬电台随机播放的歌"></p>
-
 用 `/play` 输入歌名搜索，或者直接贴链接（单曲、视频、歌单、专辑、分P视频都行）；也可以 @ 她说「放一首晴天」，见[聊天](#聊天)。
 
 **支持的链接**
@@ -137,6 +135,8 @@ python -m venv .venv
 
 ### 塞壬唱片和她的歌
 
+<p align="center"><img src="docs/images/music-siren.png" width="560" alt="塞壬电台随机播放的「正在聆听」卡片，带她的一句话和官方专辑简介"></p>
+
 - 塞壬唱片（monster-siren.hypergryph.com）是明日方舟的官方唱片公司，约 900 首歌，官方音源、音质最好、没有地区限制。`/play` 和 `/search` 的平台里可以选「塞壬唱片」。
 - 不选平台按歌名搜时，也会顺带搜塞壬唱片：歌名完全一致（如 `Speed of Light`）时官方版本排在列表最前面；中文译名（如「飞驰如光」）或角色名（如「凯尔希」）搜到的排在最后。
 - 放明日方舟的歌时，「正在播放」卡片里会多一句她的话。和她自己有关的歌是专门写的：**《Eclipse》（Aimer，六周年印象曲，社区公认是她的歌）**、巴别塔OST、慈悲灯塔OST、《离解复合》、孤星OST、众生行记OST、凯尔希的歌（Immutable、Innocence、Skeletal Wings、Before Summer）、WE、Reversed Time、Believing、From Ash to Fire。其他干员曲会说出 MV 角色和相关活动，活动原声会说出活动名。这些都是预先写好的，不调用 API。
@@ -145,6 +145,8 @@ python -m venv .venv
 - 角色和活动的对应关系来自 PRTS Wiki 的音乐列表，写在 `siren_lore.py` 里，她的专属台词也在那里，可以自己改或者加。
 
 ### 网易云音乐
+
+<p align="center"><img src="docs/images/music-netease.png" width="560" alt="从网易云播放 Eclipse 的「正在聆听」卡片，带她为自己的歌写的一句话"></p>
 
 > [!IMPORTANT]
 > 网易云对**中国大陆以外的 IP** 有地区限制，但是按歌曲来的：一部分歌（比如周杰伦的）拿不到播放地址，很多歌（比如孤勇者、Lemon、Shape of You）海外也能正常播放。被限制的原唱还会从搜索结果里被藏起来，排在前面的往往是翻唱。
@@ -178,6 +180,8 @@ python -m venv .venv
 **VIP 歌曲**：可以填 `NETEASE_MUSIC_U`，用**你自己账号**的登录 Cookie（浏览器登录 music.163.com 后，在开发者工具 → Application → Cookies 里找 `MUSIC_U`）。只能播放你的账号本来就有权限听的歌，只能试听片段的歌会被跳过。不要把 `MUSIC_U` 发给别人，它等于你的登录状态。
 
 ### Bilibili
+
+<p align="center"><img src="docs/images/music-bilibili.png" width="560" alt="从 Bilibili 播放感谢庆典印象曲的「正在聆听」卡片"></p>
 
 不登录也能用。偶尔某些关键词搜索会触发 B 站的人机验证，这时机器人会提示，可以：
 

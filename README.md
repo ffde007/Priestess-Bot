@@ -1,6 +1,6 @@
-<img src="docs/images/priestess.png" align="right" width="140" alt="普瑞赛斯">
-
 # 普瑞赛斯 Priestess-Bot
+
+<img src="docs/images/priestess.png" align="right" width="140" alt="普瑞赛斯">
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white) ![Windows](https://img.shields.io/badge/platform-Windows-0078D6) ![discord.py 2.7](https://img.shields.io/badge/discord.py-2.7-5865F2?logo=discord&logoColor=white)
 

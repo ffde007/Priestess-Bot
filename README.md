@@ -452,6 +452,8 @@ YouTube 经常改版，如果突然不能播放了，先更新 yt-dlp：
 
 **怎么删除**：退出机器人后，删掉 `data/chat_usage.json` 和 `logs/` 里的文件即可。删掉 `data/serpapi_usage.json` 会让每月查询次数从 0 重新算。
 
+**发现了安全问题**：请不要开公开 issue，按 [SECURITY.md](SECURITY.md) 里的方法私下报告。密钥泄露后怎么重置，也写在里面。
+
 ## 开发
 
 <details>

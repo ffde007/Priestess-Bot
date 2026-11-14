@@ -332,7 +332,7 @@ siren_lore.py              塞壬唱片歌曲对应的角色、活动，和她�
 
 ## 许可证和致谢
 
-- **代码**：[MIT](LICENSE)。
+- **代码**：[MIT](LICENSE)。MIT 只管源代码；下面提到的角色、图片和第三方数据不在此列，各自沿用原有的版权或许可。
 - **角色和图片**：普瑞赛斯和《明日方舟》的角色、名字、图片（包括 `assets/priestess*.png`、`assets/priestess.ico`）版权归 [鹰角网络](https://www.hypergryph.com) 所有，不在 MIT 许可证范围内。这是一个非官方粉丝项目，与鹰角网络无关。台词都是原创的，没有照搬游戏文本。
 - **塞壬唱片**的歌曲和专辑简介由机器人在播放时从 [官网](https://monster-siren.hypergryph.com) 读取，仓库里不带音频。
 - `siren_lore.py` 里歌曲和角色、活动的对应关系整理自 [PRTS Wiki](https://prts.wiki) 的音乐列表，PRTS Wiki 的内容使用 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 许可。

@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ env.TAG }}
+          persist-credentials: false # the build installs libraries; keep the token out of .git
       - uses: actions/setup-python@v7
         with:
           python-version: "3.14" # same minor version as PYTHON_VERSION in tools/build_portable.py

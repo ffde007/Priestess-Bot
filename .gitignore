@@ -1,6 +1,9 @@
 *.info.json
 .env
+.env.*
+!.env.example
 .venv/
+build/
 __pycache__/
 cookies*.txt
 data/

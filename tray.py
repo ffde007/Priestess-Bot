@@ -1,8 +1,9 @@
 """Run Priestess from the system tray (the hidden-icons area), with no console window.
 
 Start it with `pythonw.exe tray.py`; the PRTS shortcut does this. Output goes to logs/bot.log.
-Right-click the icon to open the log, restart or quit. PRTS.bat still runs the bot with a
-console window, which is handy for debugging.
+Right-click the icon to open the log, change the settings, restart or quit. With no token in
+.env yet, the bot isn't started and the setup page (wizard.py) opens instead. PRTS.bat still
+runs the bot with a console window, which is handy for debugging.
 """
 
 from __future__ import annotations
@@ -99,6 +100,7 @@ class BotRunner:
         self.bot = None
         self.error: BaseException | None = None
         self.waiting_for_network = False
+        self.needs_setup = False  # no token yet: the bot isn't started, the setup page is opened instead
         self._stop: asyncio.Event | None = None
         self.thread = threading.Thread(target=self._run, name="discord-bot", daemon=True)
 
@@ -166,7 +168,8 @@ class BotRunner:
     def stop(self, timeout: float = 20) -> None:
         if self.loop and self._stop and not self.loop.is_closed():
             self.loop.call_soon_threadsafe(self._stop.set)
-        self.thread.join(timeout)
+        if self.thread.is_alive():
+            self.thread.join(timeout)
 
     @property
     def speech(self):
@@ -202,6 +205,8 @@ class BotRunner:
 
     @property
     def status(self) -> str:
+        if self.needs_setup:
+            return "还没有设置"
         if self.error is not None:
             return "出错了，请查看日志"
         if self.waiting_for_network:
@@ -240,6 +245,23 @@ def run_tray(runner: BotRunner, mutex: int) -> None:
             creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
         )
 
+    setup_page = []  # the running setup page (wizard.py), started the first time it is opened
+
+    def open_setup(icon, item) -> None:
+        import webbrowser
+
+        try:
+            if not setup_page:
+                from wizard import Wizard
+
+                page = Wizard(on_saved=lambda: restart(icon, None))  # the new copy reads the new .env
+                page.start()
+                setup_page.append(page)
+            webbrowser.open(setup_page[0].url)
+        except Exception as e:  # noqa: BLE001 - shown in the tray instead of a console
+            log.exception("Opening the setup page failed")
+            icon.notify(f"设置页面没能打开：{e}", "普瑞赛斯")
+
     def toggle_voice(icon, item) -> None:
         runner.toggle_voice(lambda text: icon.notify(text, "普瑞赛斯"))
 
@@ -264,12 +286,13 @@ def run_tray(runner: BotRunner, mutex: int) -> None:
         pystray.Menu.SEPARATOR,
         pystray.MenuItem("打开日志", open_log, default=True),  # also on double-click
         pystray.MenuItem("打开文件夹", open_folder),
+        pystray.MenuItem("设置", open_setup),
         pystray.MenuItem("开机自启动", toggle_autostart, checked=lambda item: autostart_enabled()),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem("重新启动", restart),
         pystray.MenuItem("退出", quit_app),
     )
-    icon = pystray.Icon("priestess", Image.open(ICON_FILE), "普瑞赛斯 · 正在连接……", menu)
+    icon = pystray.Icon("priestess", Image.open(ICON_FILE), f"普瑞赛斯 · {runner.status}", menu)
 
     def watch_status() -> None:
         announced = False
@@ -293,6 +316,9 @@ def run_tray(runner: BotRunner, mutex: int) -> None:
     def setup(icon) -> None:
         icon.visible = True
         threading.Thread(target=watch_status, name="tray-status", daemon=True).start()
+        if runner.needs_setup:
+            open_setup(icon, None)
+            icon.notify("还有几件事要先告诉我——设置页面已经在浏览器里打开了。", "普瑞赛斯")
 
     icon.run(setup=setup)
 
@@ -308,12 +334,11 @@ def main() -> None:
 
     import config
 
-    if not config.DISCORD_TOKEN:
-        message_box("还没有设置 DISCORD_TOKEN。\n请在 .env 里填好后再启动。")
-        return
-
     runner = BotRunner()
-    runner.start()
+    if config.DISCORD_TOKEN:
+        runner.start()
+    else:
+        runner.needs_setup = True  # run_tray opens the setup page; saving there restarts with the token
     run_tray(runner, mutex)
 
 

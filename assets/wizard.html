@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>普瑞赛斯 · 设置</title>
+<link rel="icon" href="/icon.png">
+<style>
+  :root {
+    --bg: #f4f5f9; --card: #ffffff; --text: #1d2130; --muted: #636a80; --line: #dfe2ec;
+    --accent: #4f5fd6; --accent-text: #ffffff; --ok: #1f8a5b; --warn: #b26a00; --bad: #c0392b;
+    --field: #ffffff; --soft: #eef0f8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12141c; --card: #1b1e2a; --text: #e8eaf2; --muted: #9aa1b8; --line: #2d3245;
+      --accent: #8c99ff; --accent-text: #12141c; --ok: #5fd0a0; --warn: #f0b45a; --bad: #ff8576;
+      --field: #12141c; --soft: #242838;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 16px 64px; background: var(--bg); color: var(--text);
+    font: 15px/1.65 "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  header img { width: 64px; height: 64px; border-radius: 50%; background: var(--soft); }
+  h1 { margin: 0; font-size: 22px; font-weight: 600; }
+  header p { margin: 2px 0 0; color: var(--muted); }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; margin-bottom: 16px; }
+  section.locked { opacity: .5; pointer-events: none; }
+  h2 { margin: 0 0 10px; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  h2 .n {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--soft); color: var(--muted);
+    font-size: 13px; display: inline-flex; align-items: center; justify-content: center; flex: none;
+  }
+  h2 .opt { font-weight: 400; font-size: 13px; color: var(--muted); }
+  p { margin: 8px 0; }
+  ol { margin: 8px 0; padding-left: 22px; }
+  .muted { color: var(--muted); font-size: 13.5px; }
+  a { color: var(--accent); }
+  code { background: var(--soft); border-radius: 4px; padding: 1px 5px; font: 13px Consolas, monospace; }
+  .row { display: flex; gap: 8px; margin: 12px 0 4px; flex-wrap: wrap; }
+  input[type=password], input[type=text], select {
+    flex: 1 1 240px; min-width: 0; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--field); color: var(--text); font: inherit;
+  }
+  select { flex: 0 0 auto; }
+  input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button, a.button {
+    padding: 9px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text);
+    font: inherit; cursor: pointer; text-decoration: none; display: inline-block; white-space: nowrap;
+  }
+  button.primary, a.button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
+  button:disabled { opacity: .55; cursor: default; }
+  button.link { border: 0; background: none; padding: 0; color: var(--accent); text-decoration: underline; }
+  .msg { margin: 8px 0 0; font-size: 13.5px; }
+  .msg:empty, .note:empty, #chat-saved:empty { display: none; }
+  .msg.bad { color: var(--bad); } .msg.ok { color: var(--ok); }
+  .bot { display: flex; align-items: center; gap: 12px; margin: 4px 0 12px; }
+  .bot img { width: 44px; height: 44px; border-radius: 50%; background: var(--soft); }
+  .bot strong { font-size: 16px; }
+  .check { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-top: 1px solid var(--line); }
+  .check .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 8px; background: var(--warn); }
+  .check.ok .dot { background: var(--ok); }
+  .check .body { flex: 1; min-width: 0; }
+  .check .title { font-weight: 600; }
+  .check .acts { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .guilds { list-style: none; margin: 12px 0 4px; padding: 0; border: 1px solid var(--line); border-radius: 8px; }
+  .guilds li + li { border-top: 1px solid var(--line); }
+  .guilds label { display: flex; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; }
+  .guilds img, .guilds .noicon { width: 32px; height: 32px; border-radius: 50%; background: var(--soft); flex: none; }
+  .guilds .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .guilds .id { color: var(--muted); font-size: 12.5px; }
+  .empty { padding: 14px 12px; color: var(--muted); }
+  .note { margin: 10px 0 0; padding: 9px 12px; border-radius: 8px; background: var(--soft); font-size: 13.5px; }
+  .note.warn { color: var(--warn); }
+  .save { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 20px; }
+  .save button { padding: 11px 22px; font-size: 16px; }
+  .hidden { display: none !important; }
+  #done { text-align: center; padding: 48px 22px; }
+  #done h2 { justify-content: center; font-size: 20px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="/icon.png" alt="">
+    <div>
+      <h1>普瑞赛斯 · 设置</h1>
+      <p id="lead">三步就好：机器人、服务器、聊天。填的内容只保存在这台电脑上。</p>
+    </div>
+  </header>
+
+  <section id="nokey" class="hidden">
+    <h2>这个页面过期了</h2>
+    <p>请右键托盘里的普瑞赛斯图标，点「设置」重新打开。</p>
+  </section>
+
+  <div id="steps" class="hidden">
+    <section id="s-token">
+      <h2><span class="n">1</span>机器人</h2>
+      <div id="bot-view" class="hidden">
+        <div class="bot"><img id="bot-avatar" alt=""><div><strong id="bot-name"></strong><div class="muted">Token 有效 · <button class="link" id="change-token">换一个 Token</button></div></div></div>
+        <div class="check" id="c-public"><span class="dot"></span><div class="body">
+          <div class="title"></div><div class="muted text"></div>
+          <div class="acts"><a class="button" target="_blank" rel="noopener" data-portal>打开 Bot 页</a><button data-recheck>重新检查</button></div>
+        </div></div>
+        <div class="check" id="c-intent"><span class="dot"></span><div class="body">
+          <div class="title"></div><div class="muted text"></div>
+          <div class="acts"><button id="enable-intent">帮我打开</button><a class="button" target="_blank" rel="noopener" data-portal>打开 Bot 页</a><button data-recheck>重新检查</button></div>
+        </div></div>
+        <p class="msg" id="check-msg"></p>
+      </div>
+      <div id="token-form">
+        <ol>
+          <li>打开 <a id="portal" target="_blank" rel="noopener">Discord 开发者后台</a>，点 <b>New Application</b>，起一个名字。</li>
+          <li>左侧 <b>Installation</b> 页，把 <b>Install Link</b> 改成 <b>None</b>，点 <b>Save Changes</b>。不改的话，之后关不掉 Public Bot。</li>
+          <li>左侧 <b>Bot</b> 页 → <b>Reset Token</b>，复制出现的 Token。</li>
+          <li>粘贴到下面。</li>
+        </ol>
+        <div class="row">
+          <input type="password" id="token" placeholder="粘贴 Token" autocomplete="off" spellcheck="false" aria-label="Discord Token">
+          <button class="primary" id="check-token">验证</button>
+        </div>
+        <p class="muted">Token 只写进这个文件夹的 <code>.env</code>，不会发给 Discord 以外的任何地方。</p>
+        <p class="msg" id="token-msg"></p>
+      </div>
+    </section>
+
+    <section id="s-guilds" class="locked">
+      <h2><span class="n">2</span>服务器</h2>
+      <p>先把她邀请进你的服务器，再勾选她可以待的服务器。</p>
+      <div class="row">
+        <a class="button primary" id="invite" target="_blank" rel="noopener">邀请她进服务器</a>
+        <button id="refresh-guilds">刷新列表</button>
+      </div>
+      <ul class="guilds" id="guild-list"><li class="empty">填好 Token 之后，这里会列出她所在的服务器。</li></ul>
+      <p class="note" id="guild-note"></p>
+      <p class="msg" id="guild-msg"></p>
+    </section>
+
+    <section id="s-chat" class="locked">
+      <h2><span class="n">3</span>聊天 <span class="opt">可选，不填也能点歌</span></h2>
+      <p>@ 她聊天需要 DeepSeek 或 Claude 的 API 密钥，按用量计费，花的是你自己的钱。</p>
+      <p class="muted" id="chat-saved"></p>
+      <div class="row">
+        <select id="provider" aria-label="聊天平台">
+          <option value="deepseek">DeepSeek</option>
+          <option value="claude">Claude</option>
+        </select>
+        <input type="password" id="chat-key" placeholder="粘贴 API 密钥" autocomplete="off" spellcheck="false" aria-label="API 密钥">
+        <button id="check-chat">验证</button>
+      </div>
+      <p class="muted">在哪里拿：<a id="key-link" target="_blank" rel="noopener"></a> 的 API Keys 页。</p>
+      <p class="msg" id="chat-msg"></p>
+    </section>
+
+    <section id="s-extras">
+      <h2>其他功能 <span class="opt">都不影响启动，可以以后再弄</span></h2>
+      <div id="features"></div>
+      <p class="muted">音量、每日额度、活动提醒频道这些设置，在这个文件夹的 <code>.env</code> 里，每一项都有说明。</p>
+    </section>
+
+    <div class="save">
+      <button class="primary" id="save" disabled>保存并启动</button>
+      <span class="msg" id="save-msg"></span>
+    </div>
+  </div>
+
+  <section id="done" class="hidden">
+    <h2>保存好了</h2>
+    <p id="done-text">她正在醒来。右下角托盘（可能在 <b>^</b> 展开的隐藏图标里）会出现她的头像。</p>
+    <p class="muted">这个页面可以关掉了。以后想改，右键托盘图标点「设置」。</p>
+  </section>
+</main>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const KEY_LINKS = {
+  deepseek: ["platform.deepseek.com", "https://platform.deepseek.com"],
+  claude: ["platform.claude.com", "https://platform.claude.com"],
+};
+const PROVIDER_NAMES = { deepseek: "DeepSeek", claude: "Claude" };
+
+// The key arrives after the # (never sent to any server) and is taken out of the address bar.
+let key = location.hash.slice(1);
+try {
+  if (key) sessionStorage.setItem("setup-key", key); else key = sessionStorage.getItem("setup-key") || "";
+} catch (e) { /* private window: the key just won't survive a reload */ }
+history.replaceState(null, "", location.pathname);
+
+let state = null, bot = null, guilds = [], chosen = new Set(), chosenReady = false;
+
+async function api(path, body) {
+  const options = { headers: { "X-Setup-Key": key } };
+  if (body !== undefined) {
+    options.method = "POST";
+    options.headers["Content-Type"] = "application/json";
+    options.body = JSON.stringify(body);
+  }
+  let response;
+  try { response = await fetch(path, options); }
+  catch (e) { throw new Error("连不上普瑞赛斯。她可能已经退出了：重新启动后，从托盘的「设置」再打开这个页面。"); }
+  if (response.status === 403) { showExpired(); throw new Error("这个页面过期了。"); }
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || `出错了（${response.status}）。`);
+  return data;
+}
+
+function say(id, text, kind) {
+  const el = $(id);
+  el.textContent = text || "";
+  el.className = "msg" + (kind ? " " + kind : "");
+}
+
+// Runs `work` with the button disabled and relabelled; errors go to the message line `msgId`.
+async function busy(button, label, msgId, work) {
+  const old = button.textContent;
+  button.disabled = true; button.textContent = label;
+  say(msgId, "");
+  try { await work(); }
+  catch (e) { say(msgId, e.message, "bad"); }
+  finally { button.disabled = false; button.textContent = old; }
+}
+
+function showExpired() {
+  $("steps").classList.add("hidden");
+  $("nokey").classList.remove("hidden");
+}
+
+function renderBot() {
+  $("bot-view").classList.toggle("hidden", !bot);
+  $("token-form").classList.toggle("hidden", !!bot);
+  $("s-guilds").classList.toggle("locked", !bot);
+  $("s-chat").classList.toggle("locked", !bot);
+  $("save").disabled = !bot;
+  if (!bot) return;
+  $("bot-name").textContent = bot.name;
+  $("bot-avatar").src = bot.avatar || "/icon.png";
+  $("invite").href = bot.invite_url;
+  document.querySelectorAll("[data-portal]").forEach((a) => { a.href = bot.portal_url; });
+
+  const pub = $("c-public");
+  pub.classList.toggle("ok", !bot.public);
+  pub.querySelector(".title").textContent = bot.public ? "Public Bot 还开着" : "Public Bot 已关闭";
+  pub.querySelector(".text").textContent = bot.public
+    ? "别人拿到邀请链接也能把她拉进自己的服务器，用的是你的密钥。请在 Bot 页把 Public Bot 关掉；关不掉的话，先到 Installation 页把 Install Link 改成 None。"
+    : "只有你能邀请她。";
+  pub.querySelector(".acts").classList.toggle("hidden", !bot.public);
+
+  const intent = $("c-intent");
+  intent.classList.toggle("ok", bot.message_content);
+  intent.querySelector(".title").textContent = bot.message_content ? "Message Content Intent 已打开" : "Message Content Intent 没有打开";
+  intent.querySelector(".text").textContent = bot.message_content
+    ? "有人 @ 到和她同名的身份组时，她也能读到内容。"
+    : "不打开也能用，但有人 @ 到和她同名的身份组时，她读不到后面的话。";
+  intent.querySelector(".acts").classList.toggle("hidden", bot.message_content);
+}
+
+function renderGuilds() {
+  const list = $("guild-list");
+  list.textContent = "";
+  const known = new Set(guilds.map((g) => g.id));
+  // Servers that are allowed in .env but she isn't in (yet): keep them, so saving doesn't drop them.
+  const rows = guilds.concat([...chosen].filter((id) => !known.has(id)).map((id) => ({ id, name: null, icon: null })));
+  if (!rows.length) {
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = "她还不在任何服务器里。点「邀请她进服务器」，选好服务器之后回来点「刷新列表」。";
+    list.append(li);
+  }
+  for (const g of rows) {
+    const li = document.createElement("li"), label = document.createElement("label");
+    const box = document.createElement("input");
+    box.type = "checkbox"; box.checked = chosen.has(g.id);
+    box.addEventListener("change", () => { box.checked ? chosen.add(g.id) : chosen.delete(g.id); renderGuildNote(); });
+    let icon;
+    if (g.icon) { icon = document.createElement("img"); icon.src = g.icon; icon.alt = ""; }
+    else { icon = document.createElement("span"); icon.className = "noicon"; }
+    const name = document.createElement("span");
+    name.className = "name";
+    name.textContent = g.name === null ? "她现在不在这个服务器里" : g.name;
+    const id = document.createElement("span");
+    id.className = "id"; id.textContent = g.id;
+    label.append(box, icon, name, id);
+    li.append(label); list.append(li);
+  }
+  renderGuildNote();
+}
+
+function renderGuildNote() {
+  const note = $("guild-note");
+  const left = guilds.filter((g) => !chosen.has(g.id)).length;
+  let text, warn = false;
+  if (chosen.size === 0) {
+    text = "一个都没勾选：她不限制服务器，谁把她拉进去，用的都是你的密钥。建议至少勾选一个。";
+    warn = true;
+  } else {
+    text = chosen.size === 1
+      ? "斜杠命令会马上出现在这个服务器里。"
+      : "勾选了几个服务器：斜杠命令改为全局同步，最多要等一小时才会在各个服务器里出现。";
+    if (left) { text += ` 没勾选的 ${left} 个服务器，她启动后会马上退出。`; warn = true; }
+  }
+  note.textContent = text;
+  note.className = "note" + (warn ? " warn" : "");
+}
+
+async function loadGuilds() {
+  guilds = (await api("/api/guilds")).guilds;
+  if (!chosenReady) {
+    // Already set up: what .env allows. First time: every server she is in.
+    chosen = new Set(state.allowed.length ? state.allowed : guilds.map((g) => g.id));
+    chosenReady = guilds.length > 0 || state.allowed.length > 0;
+  }
+  renderGuilds();
+}
+
+function renderChat() {
+  const saved = state.chat.saved.map((p) => PROVIDER_NAMES[p]);
+  $("chat-saved").textContent = saved.length
+    ? `已经设置了 ${saved.join(" 和 ")} 的密钥。想换的话，在下面填新的。`
+    : "";
+  const [text, href] = KEY_LINKS[$("provider").value];
+  $("key-link").textContent = text; $("key-link").href = href;
+}
+
+function renderFeatures() {
+  const box = $("features");
+  box.textContent = "";
+  for (const f of state.features) {
+    const row = document.createElement("div");
+    row.className = "check" + (f.ready ? " ok" : "");
+    const dot = document.createElement("span"); dot.className = "dot";
+    const body = document.createElement("div"); body.className = "body";
+    const title = document.createElement("div"); title.className = "title"; title.textContent = f.name;
+    const text = document.createElement("div"); text.className = "muted"; text.textContent = f.detail;
+    if (f.link) {
+      const a = document.createElement("a");
+      a.href = f.link; a.target = "_blank"; a.rel = "noopener"; a.textContent = " 去下载";
+      text.append(a);
+    }
+    body.append(title, text); row.append(dot, body); box.append(row);
+  }
+}
+
+async function start() {
+  if (!key) { showExpired(); return; }
+  try { state = await api("/api/state"); }
+  catch (e) { if (!$("nokey").classList.contains("hidden")) return; $("steps").classList.remove("hidden"); say("token-msg", e.message, "bad"); return; }
+  $("steps").classList.remove("hidden");
+  $("portal").href = state.portal;
+  $("save").textContent = state.first_run ? "保存并启动" : "保存并重新启动";
+  if (!state.first_run) $("lead").textContent = "改好之后点最下面的按钮，她会重新启动。";
+  bot = state.bot;
+  if (state.token_error) say("token-msg", "现在保存的 Token 用不了：" + state.token_error, "bad");
+  renderBot(); renderChat(); renderFeatures();
+  if (bot) loadGuilds().catch((e) => say("guild-msg", e.message, "bad"));
+}
+
+$("check-token").addEventListener("click", (event) => busy(event.target, "正在验证…", "token-msg", async () => {
+  bot = (await api("/api/token", { token: $("token").value })).bot;
+  $("token").value = "";
+  renderBot();
+  await loadGuilds();
+}));
+$("token").addEventListener("keydown", (event) => { if (event.key === "Enter") $("check-token").click(); });
+$("change-token").addEventListener("click", () => {
+  $("token-form").classList.remove("hidden");
+  $("token").focus();
+});
+document.querySelectorAll("[data-recheck]").forEach((button) => button.addEventListener("click", () =>
+  busy(button, "正在检查…", "check-msg", async () => { bot = (await api("/api/recheck", {})).bot; renderBot(); })));
+$("enable-intent").addEventListener("click", (event) => busy(event.target, "正在打开…", "check-msg", async () => {
+  bot = (await api("/api/intent", {})).bot;
+  renderBot();
+}));
+$("refresh-guilds").addEventListener("click", (event) => busy(event.target, "正在刷新…", "guild-msg", loadGuilds));
+$("provider").addEventListener("change", renderChat);
+$("check-chat").addEventListener("click", (event) => busy(event.target, "正在验证…", "chat-msg", async () => {
+  const provider = $("provider").value;
+  const result = await api("/api/chat", { provider, key: $("chat-key").value });
+  $("chat-key").value = "";
+  say("chat-msg", `${PROVIDER_NAMES[provider]}：${result.detail} 点最下面的按钮保存。`, "ok");
+}));
+$("chat-key").addEventListener("keydown", (event) => { if (event.key === "Enter") $("check-chat").click(); });
+$("save").addEventListener("click", (event) => busy(event.target, "正在保存…", "save-msg", async () => {
+  if ($("chat-key").value.trim()) throw new Error("聊天密钥还没有验证：先点「验证」，或者把它清空。");
+  await api("/api/save", { guilds: [...chosen] });
+  if (!state.first_run) $("done-text").textContent = "她正在重新启动，一会儿就回来。";
+  $("steps").classList.add("hidden");
+  $("done").classList.remove("hidden");
+}));
+
+start();
+</script>
+</body>
+</html>

@@ -24,70 +24,99 @@
 
 ## 快速开始
 
-需要 Windows 和 Python 3.10 以上（测试用的是 3.14）。点歌和聊天本身不依赖 Windows，但托盘、`PRTS.bat`、开机自启动和游戏活动日历只能在 Windows 上用。
+需要 Windows。便携包里自带 Python 和所有依赖，不用另外安装任何东西；想用自己的 Python 的话，见这一节最后的「从源码安装」。点歌和聊天本身不依赖 Windows，但托盘、设置页面、两个 `.bat`、开机自启动和游戏活动日历只能在 Windows 上用。
 
 ### 1. 下载
 
-在 [Releases](https://github.com/ffde007/Priestess-Bot/releases) 页面下载最新版下面的 **Source code (zip)**，解压到一个固定的文件夹。以后的设置、数据和快捷方式都放在这个文件夹里。
+在 [Releases](https://github.com/ffde007/Priestess-Bot/releases) 页面下载最新版下面的 **`Priestess-Bot-版本号-windows-x64.zip`**（约 70 MB），解压到一个固定的文件夹。以后的设置、数据和快捷方式都放在这个文件夹里。
 
-会用 Git 的话，也可以直接克隆：
-
-```bash
-git clone https://github.com/ffde007/Priestess-Bot.git
-```
-
-**以后更新**：先退出机器人，把新版 zip 里的文件复制到原来的文件夹、覆盖旧文件（用 Git 的话就是 `git pull`）。`.env`、`data/` 这些你自己的文件不在压缩包里，不会被覆盖。然后装一次新版的依赖，再启动：
-
-```bash
-.venv\Scripts\python -m pip install -r requirements.txt
-```
+**以后更新**：先退出机器人，删掉文件夹里的 `runtime`（旧版自带的 Python 和依赖），再把新版 zip 解压、覆盖到原来的文件夹。`.env`、`data/` 这些你自己的文件不在压缩包里，不会被覆盖；改过 `persona.py` 这类程序文件的话，先备份。
 
 ### 2. 创建 Discord 机器人
 
 1. 打开 <https://discord.com/developers/applications>，点 **New Application**
-2. 左侧 **Bot** → **Reset Token**，复制 token
-3. 左侧 **OAuth2** → **URL Generator**：
-   - Scopes 勾选 `bot` 和 `applications.commands`
-   - Bot Permissions 勾选 `View Channels`、`Send Messages`、`Embed Links`、`Connect`、`Speak`
-4. 打开生成的链接，把机器人拉进你的服务器
-5. **关掉 Public Bot**：回到左侧 **Bot** 页，把 **Public Bot** 关掉。这样只有你自己能邀请她，别人拿到邀请链接也加不了。这一步很重要：不管她在哪个服务器被 @，用的都是你电脑上的程序和你的 API 密钥，花的是你的钱。
-6. **建议打开 Message Content Intent**（也在 **Bot** 页，私人服务器不需要审核，打开就能用）。原因见[聊天](#聊天)一节。其他 Privileged Gateway Intents 都不需要。
+2. 左侧 **Installation** → **Install Link** 选 **None**，点 **Save Changes**。不改的话，后面关不掉 Public Bot（Discord 会报「私密 APP 无法拥有默认授权关联」）。邀请链接由设置页面生成，不用这个。
+3. 左侧 **Bot** → **Reset Token**，复制 token，下一步要用
 
 机器人的名字和头像在 **General Information** 和 **Bot** 页设置。
 
-### 3. 配置
+### 3. 启动和设置
+
+双击 `启动普瑞赛斯.bat`（Windows 问要不要运行时，选运行）。右下角托盘（`^` 展开的隐藏图标里）会出现普瑞赛斯的头像；第一次启动时，还会在浏览器里打开设置页面：
+
+1. **机器人**：粘贴 token。页面会检查开发者后台的两个开关：
+   - **Public Bot** 要关掉（在 **Bot** 页）。这样只有你自己能邀请她，别人拿到邀请链接也加不了。这一步很重要：不管她在哪个服务器被 @，用的都是你电脑上的程序和你的 API 密钥，花的是你的钱。关不掉的话，先到 **Installation** 页把 **Install Link** 改成 **None** 并保存。
+   - **Message Content Intent** 建议打开，页面上点一下就行（私人服务器不需要审核）。原因见[聊天](#聊天)一节。其他 Privileged Gateway Intents 都不需要。
+2. **服务器**：点「邀请她进服务器」，选好服务器之后回来点「刷新列表」，勾选她可以待的服务器。万一她被拉进没勾选的服务器，会马上退出，不回复任何消息、不调用 API。
+3. **聊天**（可选）：填 DeepSeek 或 Claude 的 API 密钥，见[聊天](#聊天)。不填也能点歌。
+
+点「保存并启动」，她就上线了。
+
+- 设置页面只有这台电脑能打开，填的内容写进这个文件夹的 `.env`。
+- 以后想改，右键托盘图标点「设置」。想让她去朋友的服务器，邀请之后在那里勾选上就行。
+- 音量、每日额度、活动提醒这些其他设置，用记事本改 `.env`，每一项都有说明。改了之后，从托盘「重新启动」就会读到新的设置。
+
+<details>
+<summary>不用设置页面，自己填 <code>.env</code></summary>
+
+先在开发者后台做完设置页面替你做的几件事：
+
+1. 左侧 **OAuth2** → **URL Generator**：
+   - Scopes 勾选 `bot` 和 `applications.commands`
+   - Bot Permissions 勾选 `View Channels`、`Send Messages`、`Embed Links`、`Connect`、`Speak`
+2. 打开生成的链接，把机器人拉进你的服务器
+3. 左侧 **Installation** 页把 **Install Link** 改成 **None** 并保存（不然下一步关不掉 Public Bot）
+4. 回到左侧 **Bot** 页，把 **Public Bot** 关掉，并且建议打开 **Message Content Intent**
+
+然后复制一份设置文件：
 
 ```bash
 copy .env.example .env
 ```
 
-用记事本打开 `.env`，每一项都有说明。先填下面几项就能用：
+用记事本打开 `.env`，先填下面几项就能用：
 
 | 设置 | 说明 |
 | --- | --- |
 | `DISCORD_TOKEN` | 上一步复制的 token，**必填** |
 | `ALLOWED_GUILD_IDS` | **强烈建议填**：她可以待的服务器 ID，几个用逗号隔开 |
-| `DEV_GUILD_ID` | 你服务器的 ID。填了斜杠命令马上就能用；不填是全局同步，最多要等一小时才出现 |
+| `DEV_GUILD_ID` | 你服务器的 ID。填了斜杠命令马上就能用，但只同步到这一个服务器；不填是全局同步，最多要等一小时才出现 |
 | `DEEPSEEK_API_KEY` 或 `ANTHROPIC_API_KEY` | 开启聊天，见[聊天](#聊天)。不填也能点歌 |
 
 服务器 ID 的拿法：Discord 设置里打开开发者模式，右键服务器 → 复制服务器 ID。
 
-填了 `ALLOWED_GUILD_IDS` 后，万一她被拉进别的服务器，会马上退出，不回复任何消息、不调用 API。想让她去朋友的服务器，把那个服务器的 ID 加进来就行。留空时不限制服务器，日志里会提醒她在几个服务器里。
+`ALLOWED_GUILD_IDS` 留空时不限制服务器，日志里会提醒她在几个服务器里。设置页面保存时，勾选一个服务器就把它填进 `DEV_GUILD_ID`，勾选几个就把 `DEV_GUILD_ID` 留空。
 
-改了 `.env` 之后，从托盘「重新启动」就会读到新的设置。
+</details>
 
-### 4. 运行
+### 4. 平时使用
 
-双击 `PRTS.bat`。第一次会自动建好 `.venv`、装好依赖，并在这个文件夹里生成 `PRTS` 快捷方式。
-
-- **平时启动**：双击 `PRTS` 快捷方式。机器人在后台运行，没有命令行窗口，右下角托盘（`^` 展开的隐藏图标里）会出现普瑞赛斯的头像。右键图标可以查看状态、打开日志（`logs/bot.log`）、打开文件夹、重新启动或退出；双击图标也会打开日志。移动了文件夹之后，运行 `.venv\Scripts\python tray.py --shortcut` 重新生成快捷方式。
+- **平时启动**：双击 `PRTS` 快捷方式（第一次启动时生成在这个文件夹里，带她的头像），和双击 `启动普瑞赛斯.bat` 一样。机器人在后台运行，没有命令行窗口。右键托盘图标可以查看状态、打开日志（`logs/bot.log`）、打开文件夹、打开设置页面、重新启动或退出；双击图标也会打开日志。移动了文件夹之后，删掉 `PRTS` 快捷方式，再双击一次 `启动普瑞赛斯.bat`，它会重新生成。
 - **调试**：双击 `PRTS.bat` 会带着命令行窗口运行，能直接看到输出。同一时间只能运行一个普瑞赛斯：托盘版在运行时，`PRTS.bat` 会提示后退出。
 - **开机自启动**（可选，默认关闭）：右键托盘图标，勾选「开机自启动」。这会在 Windows 的「启动」文件夹里放一个普瑞赛斯的快捷方式（不需要管理员权限），取消勾选就删掉它。刚开机时网络还没连上的话，她每 30 秒重试一次，托盘状态显示「连不上 Discord，30 秒后重试」；Token 错误这类问题不会重试，状态显示「出错了」。想让图标一直显示在任务栏右下角，在 Windows 设置 → 个性化 → 任务栏 → 其他系统托盘图标里打开它。
 
-不需要单独装 ffmpeg：系统 PATH 里有就用系统的，没有就用 `imageio-ffmpeg` 自带的。解析 YouTube 需要一个 JavaScript 运行时，装了 [Node.js](https://nodejs.org/) 就行。没装的话，启动时日志里会提醒；YouTube 可能放不了，其他来源不受影响。
+不需要单独装 ffmpeg：系统 PATH 里有就用系统的，没有就用 `imageio-ffmpeg` 自带的。解析 YouTube 需要一个 JavaScript 运行时，装了 [Node.js](https://nodejs.org/) 就行。没装的话，设置页面和启动时的日志里会提醒；YouTube 可能放不了，其他来源不受影响。
 
 <details>
-<summary>不用 <code>PRTS.bat</code>，手动安装</summary>
+<summary>从源码安装（用自己的 Python，或者不在 Windows 上）</summary>
+
+需要 Python 3.10 以上（测试用的是 3.14），安装时勾选 **Add python.exe to PATH**。
+
+在 [Releases](https://github.com/ffde007/Priestess-Bot/releases) 页面下载 **Source code (zip)** 并解压，或者直接克隆：
+
+```bash
+git clone https://github.com/ffde007/Priestess-Bot.git
+```
+
+之后和便携包一样，双击 `启动普瑞赛斯.bat`：第一次会自动建好 `.venv`、装好依赖，要等几分钟。
+
+**以后更新**：先退出机器人，把新版 zip 里的文件复制到原来的文件夹、覆盖旧文件（用 Git 的话就是 `git pull`），然后装一次新版的依赖，再启动：
+
+```bash
+.venv\Scripts\python -m pip install -r requirements.txt
+```
+
+不用 `.bat` 的话，手动安装和运行（这样没有托盘和设置页面，`.env` 要自己填）：
 
 ```bash
 python -m venv .venv
@@ -95,7 +124,7 @@ python -m venv .venv
 .venv\Scripts\python bot.py
 ```
 
-`requirements.lock` 里是最后一次测试通过时每个库的确切版本。以后重装时如果新版本出了问题，改用 `pip install -r requirements.lock` 就能装回一模一样的环境。yt-dlp 例外，YouTube 放不了时要更新它（见 [YouTube](#youtube)）。
+`requirements.lock` 里是最后一次测试通过时每个库的确切版本，便携包里装的就是这些。以后重装时如果新版本出了问题，改用 `pip install -r requirements.lock` 就能装回一模一样的环境。yt-dlp 例外，YouTube 放不了时要更新它（见 [YouTube](#youtube)）。
 
 </details>
 
@@ -234,10 +263,10 @@ python -m venv .venv
 
 如果遇到 "Sign in to confirm you're not a bot"，导出 YouTube 的 cookies.txt（Netscape 格式，可以用浏览器扩展 "Get cookies.txt LOCALLY"），然后在 `.env` 里填 `YOUTUBE_COOKIES=cookies.txt` 的路径。建议用一个小号导出。
 
-YouTube 经常改版，如果突然不能播放了，先更新 yt-dlp：
+YouTube 经常改版，如果突然不能播放了，先退出机器人，在它的文件夹里更新 yt-dlp（从源码安装的话，把 `runtime\python` 换成 `.venv\Scripts\python`）：
 
 ```bash
-.venv\Scripts\python -m pip install -U "yt-dlp[default]"
+runtime\python -m pip install -U "yt-dlp[default]"
 ```
 
 ## 聊天
@@ -434,7 +463,7 @@ YouTube 经常改版，如果突然不能播放了，先更新 yt-dlp：
 
 **斜杠命令不出现**：没填 `DEV_GUILD_ID` 时全局同步要等一会儿；或者邀请链接里没勾 `applications.commands`。
 
-**机器人进了频道、头像变绿但没声音**：先检查 davey 的版本：`.venv\Scripts\python -m pip show davey`。必须是 0.1.x。davey 0.2 和 discord.py 2.7.1 不兼容，语音端到端加密（DAVE）会一直无法就绪，发出去的声音别人都听不到。`requirements.txt` 已经限制了版本，用它安装就不会出问题。也确认一下机器人有 `Speak` 权限。
+**机器人进了频道、头像变绿但没声音**：先检查 davey 的版本：`runtime\python -m pip show davey`（从源码安装的话是 `.venv\Scripts\python -m pip show davey`）。必须是 0.1.x。davey 0.2 和 discord.py 2.7.1 不兼容，语音端到端加密（DAVE）会一直无法就绪，发出去的声音别人都听不到。`requirements.txt` 已经限制了版本，用它安装就不会出问题。也确认一下机器人有 `Speak` 权限。
 
 **网易云全部提示地区限制**：见上面[网易云音乐](#网易云音乐)一节。
 
@@ -478,6 +507,10 @@ YouTube 经常改版，如果突然不能播放了，先更新 yt-dlp：
 ```
 bot.py                     入口，加载命令并同步斜杠命令
 tray.py                    托盘版入口（PRTS 快捷方式用的就是它）
+启动普瑞赛斯.bat           平时启动：没有窗口，第一次会打开设置页面
+PRTS.bat                   调试启动：带命令行窗口
+wizard.py                  设置页面：只在本机打开的网页，检查 token、列出服务器、写 .env
+assets/wizard.html         设置页面的网页
 assets/priestess.ico       托盘和快捷方式的图标
 config.py                  读取 .env 配置
 persona.py                 普瑞赛斯的台词（LINES）和聊天人设（CHAT_SYSTEM_PROMPT）
@@ -511,7 +544,12 @@ music/sources/siren.py     塞壬唱片（官方接口，本地搜索）
 music/sources/links.py     展开 b23.tv、163cn.tv 短链接（每一跳都必须留在平台自己的网站上）
 siren_lore.py              塞壬唱片歌曲对应的角色、活动，和她的专属台词
 docs/images/               README 用的图
+tools/build_portable.py    打便携包：官方的嵌入版 Python + requirements.lock 里的库 + 程序文件
+tools/wizard_demo.py       不用 token 预览设置页面（Discord 和密钥检查都是假的）
+.github/workflows/         发布 Release 时自动打便携包并挂到 Release 上
 ```
+
+**打便携包**：用 Python 3.14 运行 `python tools/build_portable.py --version v1.2.3 --test`，结果在 `build/` 里。只打包 Git 认识的文件，`.env`、`data/`、`logs/` 不会进去。
 
 </details>
 

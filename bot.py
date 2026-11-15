@@ -109,7 +109,7 @@ def main() -> None:
     if claim_single_instance() is None:
         sys.exit("普瑞赛斯已经在运行了（看看右下角的托盘图标）。")
     if not config.DISCORD_TOKEN:
-        sys.exit("DISCORD_TOKEN is not set. Copy .env.example to .env and fill it in.")
+        sys.exit("还没有设置 DISCORD_TOKEN。双击「启动普瑞赛斯.bat」会打开设置页面；也可以把 .env.example 复制成 .env 自己填。")
     log.info("Using ffmpeg at %s", config.ffmpeg_path())
     bot = MusicBot()
     asyncio.run(bot.start(config.DISCORD_TOKEN))

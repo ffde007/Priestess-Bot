@@ -28,11 +28,12 @@ from dotenv import dotenv_values
 
 log = logging.getLogger("wizard")
 
-ROOT = Path(__file__).resolve().parent
-ENV_FILE = ROOT / ".env"
-ENV_EXAMPLE = ROOT / ".env.example"
-PAGE_FILE = ROOT / "assets" / "wizard.html"
-ICON_FILE = ROOT / "assets" / "priestess.png"
+APP_DIR = Path(__file__).resolve().parent  # the program
+HOME = APP_DIR.parent  # the main folder, where .env is
+ENV_FILE = HOME / ".env"
+ENV_EXAMPLE = HOME / ".env.example"
+PAGE_FILE = APP_DIR / "assets" / "wizard.html"
+ICON_FILE = APP_DIR / "assets" / "priestess.png"
 
 DEVELOPER_PORTAL = "https://discord.com/developers/applications"
 DEEPSEEK_BALANCE_URL = "https://api.deepseek.com/user/balance"

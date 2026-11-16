@@ -26,7 +26,7 @@ import config
 
 log = logging.getLogger(__name__)
 
-LOG_FILE = Path(__file__).parent / "logs" / "sovits.log"
+LOG_FILE = config.HOME / "logs" / "sovits.log"
 STARTUP_TIMEOUT = 240  # seconds for the models to load
 SPOKEN_CHARS = 220  # read at most about this much of a reply; the rest stays in the text
 WARMUP_TEXT = "嗯。"

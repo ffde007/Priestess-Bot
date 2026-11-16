@@ -1,6 +1,6 @@
 """Topics Priestess stays away from, checked locally before anything reaches the chat API.
 
-The word list is blocked_words.txt next to this file (blocked_words.example.txt when there is
+The word list is blocked_words.txt in the main folder (app/blocked_words.example.txt when there is
 no blocked_words.txt yet), one word per line, under a section:
 [回避] words she changes the subject on (politics, real-world conflicts, slurs, porn, fan wars);
 [关心] words where someone may be hurting (self-harm), answered gently instead.
@@ -13,7 +13,6 @@ from __future__ import annotations
 import logging
 import re
 from datetime import datetime
-from pathlib import Path
 
 import zhconv
 
@@ -21,9 +20,9 @@ import config
 
 log = logging.getLogger(__name__)
 
-WORDS_FILE = Path(__file__).parent / "blocked_words.txt"
-EXAMPLE_FILE = Path(__file__).parent / "blocked_words.example.txt"
-LOG_FILE = Path(__file__).parent / "logs" / "blocked.log"
+WORDS_FILE = config.HOME / "blocked_words.txt"
+EXAMPLE_FILE = config.APP_DIR / "blocked_words.example.txt"
+LOG_FILE = config.HOME / "logs" / "blocked.log"
 MAX_LOG_BYTES = 1_000_000
 SECTIONS = {"回避": "avoid", "关心": "care"}
 

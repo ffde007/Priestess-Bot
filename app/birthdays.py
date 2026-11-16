@@ -11,15 +11,15 @@ import json
 import logging
 import re
 from datetime import date, datetime, timedelta, timezone
-from pathlib import Path
 
 import aiohttp
 
+import config
+
 log = logging.getLogger(__name__)
 
-ROOT = Path(__file__).parent
-BUNDLED = ROOT / "assets" / "operator_birthdays.json"
-FRESH = ROOT / "data" / "operator_birthdays.json"
+BUNDLED = config.APP_DIR / "assets" / "operator_birthdays.json"
+FRESH = config.HOME / "data" / "operator_birthdays.json"
 SOURCE = "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/{}.json"
 REFRESH_EVERY = timedelta(days=7)
 BIRTHDAY_RE = re.compile(r"【(?:生日|出生日|诞生日|出厂日|产品出厂日|出厂时间|制造日期)】\s*([^\n]+)")

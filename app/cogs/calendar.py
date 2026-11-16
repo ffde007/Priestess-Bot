@@ -40,7 +40,7 @@ CATCH_UP = timedelta(hours=6)  # still send posts this late (the bot was off at 
 RESYNC_GRACE = timedelta(hours=3)  # skip the startup sync if the data is this fresh
 END_OFFSETS = (timedelta(hours=1), timedelta(hours=24))  # most urgent first
 REMIND_CATEGORIES = {"event", "exchange", "gacha"}
-SENT_FILE = Path(__file__).parent.parent / "data" / "calendar_sent.json"
+SENT_FILE = config.HOME / "data" / "calendar_sent.json"
 CALENDAR_COLOR = 0x477E9F
 CARD_BUDGET = 3500  # characters for the "ends soon" card (Discord allows 4096 in a description)
 GAME_COLORS = {"arknights-cn": 0x477E9F, "endfield-cn": 0xD9A21B}

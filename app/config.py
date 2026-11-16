@@ -1,11 +1,17 @@
 import os
 import shutil
+from pathlib import Path
 
 from dotenv import load_dotenv
 
+# The program is in app/. The main folder, one level up, holds what belongs to the person
+# running her: .env, data/, logs/, voices/ and the launchers.
+APP_DIR = Path(__file__).resolve().parent
+HOME = APP_DIR.parent
+
 # .env wins over inherited variables: "重新启动" in the tray starts the new copy with the old
 # copy's environment, which still holds the .env values from before any edit.
-load_dotenv(override=True)
+load_dotenv(HOME / ".env", override=True)
 
 
 def _int(name: str, default: int) -> int:
@@ -36,8 +42,8 @@ MAX_PLAYLIST_ITEMS = 100
 
 # ---- Game calendar (Playtime / 游时) ----
 # Folder of Playtime; it is started once to sync, then closed. Empty or missing = feature off.
-PLAYTIME_DIR = os.getenv("PLAYTIME_DIR", "").strip() or os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Playtime-v0.2.0-windows-x64"
+PLAYTIME_DIR = os.getenv("PLAYTIME_DIR", "").strip() or os.path.join(  # next to the main folder
+    HOME.parent, "Playtime-v0.2.0-windows-x64"
 )
 # Re-sync this often while the bot keeps running (0 = only when the bot starts).
 PLAYTIME_REFRESH_HOURS = _int("PLAYTIME_REFRESH_HOURS", 24)
@@ -59,8 +65,8 @@ CALENDAR_PING_ROLE_ID = _int("CALENDAR_PING_ROLE_ID", 0)  # role to @ in reminde
 # ---- Her voice (GPT-SoVITS, speech.py) ----
 # Voice settings (model, reference clip, pauses, optional post_filter), see voices/example.json.
 # Empty = voices/voice.json. Missing file = no voice.
-VOICE_CONFIG = os.path.join(  # a relative path is relative to this folder
-    os.path.dirname(os.path.abspath(__file__)),
+VOICE_CONFIG = os.path.join(  # a relative path is relative to the main folder
+    HOME,
     os.getenv("VOICE_CONFIG", "").strip() or "voices/voice.json",
 )
 # Reference text: clip = the clip's own words (t1: her intonation follows the clip too),

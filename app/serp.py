@@ -10,7 +10,6 @@ from __future__ import annotations
 import json
 import logging
 from datetime import date
-from pathlib import Path
 
 import aiohttp
 
@@ -19,7 +18,7 @@ import config
 log = logging.getLogger(__name__)
 
 API = "https://serpapi.com/search.json"
-USAGE_FILE = Path(__file__).parent / "data" / "serpapi_usage.json"
+USAGE_FILE = config.HOME / "data" / "serpapi_usage.json"
 
 
 class SerpError(Exception):

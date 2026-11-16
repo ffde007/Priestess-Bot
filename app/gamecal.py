@@ -27,7 +27,7 @@ import config
 
 log = logging.getLogger(__name__)
 
-CACHE = Path(__file__).parent / "data" / "calendar.json"
+CACHE = config.HOME / "data" / "calendar.json"
 STARTUP_TIMEOUT = 60
 SYNC_TIMEOUT = 10 * 60
 POLL_SECONDS = 5

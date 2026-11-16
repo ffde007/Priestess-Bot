@@ -31,19 +31,21 @@ ROOT = Path(__file__).resolve().parent.parent
 BUILD = ROOT / "build"
 NAME = "Priestess-Bot"  # the folder inside the zip: no version, so a new zip unpacks over the old one
 # Not needed to run the bot. Dot-files and dot-folders are left out too, except .env.example.
-SKIP_PREFIXES = ("tools/", "build/")
+SKIP_PREFIXES = ("tools/", "build/", "docs/")  # docs/: the README's pictures, for GitHub
 KEEP_DOT_FILES = (".env.example",)
 
 # What the package's Python may import from, relative to runtime/. With this file Python ignores
-# the registry, PYTHON* variables and the script's own folder, so the bot's folder ("..") is
-# listed here, first, as it would be when running `python bot.py`.
-PTH_LINES = ["..", "python{mm}.zip", ".", "Lib\\site-packages", "import site"]
+# the registry, PYTHON* variables and the script's own folder, so the program's folder
+# ("..\\app") is listed here, first, as it would be when running `python app\bot.py`.
+PTH_LINES = ["..\\app", "python{mm}.zip", ".", "Lib\\site-packages", "import site"]
 
 SMOKE_TEST = """
 import sys
+from pathlib import Path
 import bot, tray, wizard, config
 import davey, discord, imageio_ffmpeg, yt_dlp
 assert sys.prefix.endswith("runtime"), sys.prefix
+assert config.HOME == Path.cwd().resolve(), config.HOME  # data/ and logs/ go in the main folder
 assert davey.__version__.startswith("0.1."), davey.__version__
 print("python", sys.version.split()[0], "| discord.py", discord.__version__, "| davey", davey.__version__,
       "| yt-dlp", yt_dlp.version.__version__)
@@ -111,7 +113,7 @@ def build(version: str) -> Path:
             sys.executable, "-m", "pip", "install", "--quiet", "--disable-pip-version-check",
             "--target", str(site_packages),
             "--no-compile",
-            "-r", str(ROOT / "requirements.lock"),
+            "-r", str(ROOT / "app" / "requirements.lock"),
             "pip",  # so yt-dlp can be updated later: runtime\\python -m pip install -U yt-dlp
         ],
         check=True,

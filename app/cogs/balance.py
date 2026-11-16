@@ -13,7 +13,6 @@ import asyncio
 import json
 import logging
 from datetime import date, datetime, timedelta, timezone
-from pathlib import Path
 from typing import Any
 
 import aiohttp
@@ -28,7 +27,7 @@ from persona import line
 log = logging.getLogger(__name__)
 
 BALANCE_URL = "https://api.deepseek.com/user/balance"
-LEDGER_FILE = Path(__file__).parent.parent / "data" / "balance.json"
+LEDGER_FILE = config.HOME / "data" / "balance.json"
 CURRENCY_SIGNS = {"CNY": "¥", "USD": "$"}
 BALANCE_COLOR = 0x8E7CC3
 

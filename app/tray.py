@@ -1,6 +1,7 @@
 """Run Priestess from the system tray (the hidden-icons area), with no console window.
 
-Start it with `pythonw.exe tray.py`; the PRTS shortcut does this. Output goes to logs/bot.log.
+Start it with `pythonw.exe app/tray.py` from the main folder; the PRTS shortcut does this.
+Output goes to logs/bot.log.
 Right-click the icon to open the log, change the settings, restart or quit. With no token in
 .env yet, the bot isn't started and the setup page (wizard.py) opens instead. PRTS.bat still
 runs the bot with a console window, which is handy for debugging.
@@ -19,12 +20,17 @@ import time
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
-os.chdir(ROOT)
-LOG_DIR = ROOT / "logs"
+APP_DIR = Path(__file__).resolve().parent  # the program
+HOME = APP_DIR.parent  # the main folder: .env, data/, logs/, the launchers and PRTS.lnk
+os.chdir(HOME)
+LOG_DIR = HOME / "logs"
 LOG_FILE = LOG_DIR / "bot.log"
-ICON_FILE = ROOT / "assets" / "priestess.png"
-ICO_FILE = ROOT / "assets" / "priestess.ico"
+ICON_FILE = APP_DIR / "assets" / "priestess.png"
+ICO_FILE = APP_DIR / "assets" / "priestess.ico"
+PRTS_LINK = HOME / "PRTS.lnk"
+# Before 1.2.0 the program was in the main folder itself. Unzipping a newer version over it
+# leaves these behind, and an old shortcut would still start them.
+OLD_LAYOUT_FILES = ("bot.py", "tray.py", "config.py")
 STARTUP_LINK = (
     Path(os.environ.get("APPDATA", "")) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup" / "普瑞赛斯.lnk"
 )
@@ -63,8 +69,8 @@ def make_shortcut(link: Path) -> None:
         [
             f"$s = (New-Object -ComObject WScript.Shell).CreateShortcut({_ps_quote(link)})",
             f"$s.TargetPath = {_ps_quote(pythonw)}",
-            f"$s.Arguments = {_ps_quote(chr(34) + str(ROOT / 'tray.py') + chr(34))}",
-            f"$s.WorkingDirectory = {_ps_quote(ROOT)}",
+            f"$s.Arguments = {_ps_quote(chr(34) + str(APP_DIR / 'tray.py') + chr(34))}",
+            f"$s.WorkingDirectory = {_ps_quote(HOME)}",
             f"$s.IconLocation = {_ps_quote(f'{ICO_FILE},0')}",
             "$s.Description = '普瑞赛斯'",
             "$s.Save()",
@@ -77,6 +83,20 @@ def make_shortcut(link: Path) -> None:
         timeout=30,
         creationflags=subprocess.CREATE_NO_WINDOW,
     )
+
+
+def refresh_shortcuts() -> None:
+    """Point PRTS.lnk and the autostart shortcut, where they exist, at this copy.
+
+    They may still start the main folder's tray.py from before 1.2.0, or a folder she was
+    moved out of. Rewriting them each start is cheap and runs in the background.
+    """
+    for link in (PRTS_LINK, STARTUP_LINK):
+        if link.is_file():
+            try:
+                make_shortcut(link)
+            except (OSError, subprocess.SubprocessError) as e:
+                log.warning("Couldn't update the shortcut %s: %s", link, e)
 
 
 def setup_output() -> None:
@@ -228,7 +248,7 @@ def run_tray(runner: BotRunner, mutex: int) -> None:
         os.startfile(LOG_FILE)
 
     def open_folder(icon, item) -> None:
-        os.startfile(ROOT)
+        os.startfile(HOME)
 
     def quit_app(icon, item) -> None:
         icon.title = "普瑞赛斯 · 正在退出……"
@@ -240,8 +260,8 @@ def run_tray(runner: BotRunner, mutex: int) -> None:
         # Let the new copy claim the single-instance mutex.
         ctypes.windll.kernel32.CloseHandle(mutex)
         subprocess.Popen(
-            [sys.executable, str(ROOT / "tray.py")],
-            cwd=ROOT,
+            [sys.executable, str(APP_DIR / "tray.py")],
+            cwd=HOME,
             creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
         )
 
@@ -316,9 +336,13 @@ def run_tray(runner: BotRunner, mutex: int) -> None:
     def setup(icon) -> None:
         icon.visible = True
         threading.Thread(target=watch_status, name="tray-status", daemon=True).start()
+        threading.Thread(target=refresh_shortcuts, name="shortcuts", daemon=True).start()
         if runner.needs_setup:
             open_setup(icon, None)
             icon.notify("还有几件事要先告诉我——设置页面已经在浏览器里打开了。", "普瑞赛斯")
+        elif any((HOME / name).is_file() for name in OLD_LAYOUT_FILES):
+            log.warning("Program files from before 1.2.0 are still in %s", HOME)
+            icon.notify("文件夹里还有旧版本的程序文件（bot.py 这些）。现在的程序在 app 文件夹里，旧的可以删掉，见 README。", "普瑞赛斯")
 
     icon.run(setup=setup)
 
@@ -344,6 +368,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     if "--shortcut" in sys.argv:  # PRTS.bat runs this once to make the PRTS shortcut
-        make_shortcut(ROOT / "PRTS.lnk")
+        make_shortcut(PRTS_LINK)
     else:
         main()

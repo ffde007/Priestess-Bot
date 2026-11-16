@@ -8,9 +8,9 @@ if exist "%PY%" goto run
 set "PY=.venv\Scripts\python.exe"
 if not exist .venv (
     python -m venv .venv
-    "%PY%" -m pip install -r requirements.txt
+    "%PY%" -m pip install -r app\requirements.txt
 )
 :run
-if not exist PRTS.lnk "%PY%" tray.py --shortcut
-"%PY%" bot.py
+if not exist PRTS.lnk "%PY%" app\tray.py --shortcut
+"%PY%" app\bot.py
 pause

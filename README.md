@@ -30,103 +30,119 @@
 
 在 [Releases](https://github.com/ffde007/Priestess-Bot/releases) 页面下载最新版下面的 **`Priestess-Bot-版本号-windows-x64.zip`**（约 70 MB），解压到一个固定的文件夹。以后的设置、数据和快捷方式都放在这个文件夹里。
 
-**以后更新**：先退出机器人，删掉文件夹里的 `runtime`（旧版自带的 Python 和依赖），再把新版 zip 解压、覆盖到原来的文件夹。`.env`、`data/` 这些你自己的文件不在压缩包里，不会被覆盖；改过 `persona.py` 这类程序文件的话，先备份。
+**以后更新**：先退出机器人，删掉文件夹里的 `app` 和 `runtime`（旧版的程序和自带的 Python），再把新版 zip 解压、覆盖到原来的文件夹。`.env`、`data/` 这些你自己的文件不在压缩包里，不会被覆盖；改过 `app/persona.py` 这类程序文件的话，先备份。
 
-### 2. 创建 Discord 机器人
+**从 1.1.0 或更早的版本更新**：以前程序文件直接放在主文件夹里，现在都在 `app` 文件夹里。最省事的办法是解压到一个新文件夹，再把旧文件夹里的 `.env`、`data/`、`voices/voice.json`（和 `blocked_words.txt`，如果有）复制过去，然后双击新文件夹里的 `启动普瑞赛斯.bat`：`PRTS` 快捷方式和开机自启动会自己改成指向新文件夹。确认没问题后，旧文件夹可以删掉。
 
-1. 打开 <https://discord.com/developers/applications>，点 **New Application**
-2. 左侧 **Installation** → **Install Link** 选 **None**，点 **Save Changes**。不改的话，后面关不掉 Public Bot（Discord 会报「私密 APP 无法拥有默认授权关联」）。邀请链接由设置页面生成，不用这个。
-3. 左侧 **Bot** → **Reset Token**，复制 token，下一步要用
+### 2. 启动和设置
 
-机器人的名字和头像在 **General Information** 和 **Bot** 页设置。
+双击 `启动普瑞赛斯.bat`（Windows 问要不要运行时，选运行）。第一次启动时会在浏览器里打开设置页面，从创建 Discord 机器人开始，一步步带你填好 token、邀请她进服务器、填聊天密钥（可选）。点「保存并启动」，她就上线了。
 
-### 3. 启动和设置
-
-双击 `启动普瑞赛斯.bat`（Windows 问要不要运行时，选运行）。右下角托盘（`^` 展开的隐藏图标里）会出现普瑞赛斯的头像；第一次启动时，还会在浏览器里打开设置页面：
-
-1. **机器人**：粘贴 token。页面会检查开发者后台的两个开关：
-   - **Public Bot** 要关掉（在 **Bot** 页）。这样只有你自己能邀请她，别人拿到邀请链接也加不了。这一步很重要：不管她在哪个服务器被 @，用的都是你电脑上的程序和你的 API 密钥，花的是你的钱。关不掉的话，先到 **Installation** 页把 **Install Link** 改成 **None** 并保存。
-   - **Message Content Intent** 建议打开，页面上点一下就行（私人服务器不需要审核）。原因见[聊天](#聊天)一节。其他 Privileged Gateway Intents 都不需要。
-2. **服务器**：点「邀请她进服务器」，选好服务器之后回来点「刷新列表」，勾选她可以待的服务器。万一她被拉进没勾选的服务器，会马上退出，不回复任何消息、不调用 API。
-3. **聊天**（可选）：填 DeepSeek 或 Claude 的 API 密钥，见[聊天](#聊天)。不填也能点歌。
-
-点「保存并启动」，她就上线了。
-
-- 设置页面只有这台电脑能打开，填的内容写进这个文件夹的 `.env`。
-- 以后想改，右键托盘图标点「设置」。想让她去朋友的服务器，邀请之后在那里勾选上就行。
+- 页面提醒你关掉 **Public Bot** 时，一定要关：不管她在哪个服务器被 @，用的都是你电脑上的程序和你的 API 密钥，花的是你的钱。
+- 以后想改，右键托盘图标点「设置」。
 - 音量、每日额度、活动提醒这些其他设置，用记事本改 `.env`，每一项都有说明。改了之后，从托盘「重新启动」就会读到新的设置。
 
-<details>
-<summary>不用设置页面，自己填 <code>.env</code></summary>
+### 3. 平时使用
 
-先在开发者后台做完设置页面替你做的几件事：
-
-1. 左侧 **OAuth2** → **URL Generator**：
-   - Scopes 勾选 `bot` 和 `applications.commands`
-   - Bot Permissions 勾选 `View Channels`、`Send Messages`、`Embed Links`、`Connect`、`Speak`
-2. 打开生成的链接，把机器人拉进你的服务器
-3. 左侧 **Installation** 页把 **Install Link** 改成 **None** 并保存（不然下一步关不掉 Public Bot）
-4. 回到左侧 **Bot** 页，把 **Public Bot** 关掉，并且建议打开 **Message Content Intent**
-
-然后复制一份设置文件：
-
-```bash
-copy .env.example .env
-```
-
-用记事本打开 `.env`，先填下面几项就能用：
-
-| 设置 | 说明 |
-| --- | --- |
-| `DISCORD_TOKEN` | 上一步复制的 token，**必填** |
-| `ALLOWED_GUILD_IDS` | **强烈建议填**：她可以待的服务器 ID，几个用逗号隔开 |
-| `DEV_GUILD_ID` | 你服务器的 ID。填了斜杠命令马上就能用，但只同步到这一个服务器；不填是全局同步，最多要等一小时才出现 |
-| `DEEPSEEK_API_KEY` 或 `ANTHROPIC_API_KEY` | 开启聊天，见[聊天](#聊天)。不填也能点歌 |
-
-服务器 ID 的拿法：Discord 设置里打开开发者模式，右键服务器 → 复制服务器 ID。
-
-`ALLOWED_GUILD_IDS` 留空时不限制服务器，日志里会提醒她在几个服务器里。设置页面保存时，勾选一个服务器就把它填进 `DEV_GUILD_ID`，勾选几个就把 `DEV_GUILD_ID` 留空。
-
-</details>
-
-### 4. 平时使用
-
-- **平时启动**：双击 `PRTS` 快捷方式（第一次启动时生成在这个文件夹里，带她的头像），和双击 `启动普瑞赛斯.bat` 一样。机器人在后台运行，没有命令行窗口。右键托盘图标可以查看状态、打开日志（`logs/bot.log`）、打开文件夹、打开设置页面、重新启动或退出；双击图标也会打开日志。移动了文件夹之后，删掉 `PRTS` 快捷方式，再双击一次 `启动普瑞赛斯.bat`，它会重新生成。
+- **平时启动**：双击 `PRTS` 快捷方式（第一次启动时生成在这个文件夹里，带她的头像），和双击 `启动普瑞赛斯.bat` 一样。机器人在后台运行，没有命令行窗口。右键托盘图标可以查看状态、打开日志（`logs/bot.log`）、打开文件夹、打开设置页面、重新启动或退出；双击图标也会打开日志。移动了文件夹之后，双击一次 `启动普瑞赛斯.bat`，`PRTS` 快捷方式和开机自启动会自己改好。
 - **调试**：双击 `PRTS.bat` 会带着命令行窗口运行，能直接看到输出。同一时间只能运行一个普瑞赛斯：托盘版在运行时，`PRTS.bat` 会提示后退出。
 - **开机自启动**（可选，默认关闭）：右键托盘图标，勾选「开机自启动」。这会在 Windows 的「启动」文件夹里放一个普瑞赛斯的快捷方式（不需要管理员权限），取消勾选就删掉它。刚开机时网络还没连上的话，她每 30 秒重试一次，托盘状态显示「连不上 Discord，30 秒后重试」；Token 错误这类问题不会重试，状态显示「出错了」。想让图标一直显示在任务栏右下角，在 Windows 设置 → 个性化 → 任务栏 → 其他系统托盘图标里打开它。
 
 不需要单独装 ffmpeg：系统 PATH 里有就用系统的，没有就用 `imageio-ffmpeg` 自带的。解析 YouTube 需要一个 JavaScript 运行时，装了 [Node.js](https://nodejs.org/) 就行。没装的话，设置页面和启动时的日志里会提醒；YouTube 可能放不了，其他来源不受影响。
 
-<details>
-<summary>从源码安装（用自己的 Python，或者不在 Windows 上）</summary>
+> [!TIP]
+> <details>
+> <summary><b>点开看：从源码安装（用自己的 Python，或者不在 Windows 上）</b></summary>
+>
+> 需要 Python 3.10 以上（测试用的是 3.14），安装时勾选 **Add python.exe to PATH**。
+>
+> 在 [Releases](https://github.com/ffde007/Priestess-Bot/releases) 页面下载 **Source code (zip)** 并解压，或者直接克隆：
+>
+> ```bash
+> git clone https://github.com/ffde007/Priestess-Bot.git
+> ```
+>
+> 之后和便携包一样，双击 `启动普瑞赛斯.bat`：第一次会自动建好 `.venv`、装好依赖，要等几分钟。
+>
+> **以后更新**：先退出机器人，把新版 zip 里的文件复制到原来的文件夹、覆盖旧文件（用 Git 的话就是 `git pull`），然后装一次新版的依赖，再启动：
+>
+> ```bash
+> .venv\Scripts\python -m pip install -r app\requirements.txt
+> ```
+>
+> 不用 `.bat` 的话，手动安装和运行（这样没有托盘和设置页面，`.env` 要自己填，见下面的旧版安装教程）：
+>
+> ```bash
+> python -m venv .venv
+> .venv\Scripts\python -m pip install -r app\requirements.txt
+> .venv\Scripts\python app\bot.py
+> ```
+>
+> `app/requirements.lock` 里是最后一次测试通过时每个库的确切版本，便携包里装的就是这些。以后重装时如果新版本出了问题，改用 `pip install -r app\requirements.lock` 就能装回一模一样的环境。yt-dlp 例外，YouTube 放不了时要更新它（见 [YouTube](#youtube)）。
+>
+> </details>
 
-需要 Python 3.10 以上（测试用的是 3.14），安装时勾选 **Add python.exe to PATH**。
-
-在 [Releases](https://github.com/ffde007/Priestess-Bot/releases) 页面下载 **Source code (zip)** 并解压，或者直接克隆：
-
-```bash
-git clone https://github.com/ffde007/Priestess-Bot.git
-```
-
-之后和便携包一样，双击 `启动普瑞赛斯.bat`：第一次会自动建好 `.venv`、装好依赖，要等几分钟。
-
-**以后更新**：先退出机器人，把新版 zip 里的文件复制到原来的文件夹、覆盖旧文件（用 Git 的话就是 `git pull`），然后装一次新版的依赖，再启动：
-
-```bash
-.venv\Scripts\python -m pip install -r requirements.txt
-```
-
-不用 `.bat` 的话，手动安装和运行（这样没有托盘和设置页面，`.env` 要自己填）：
-
-```bash
-python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
-.venv\Scripts\python bot.py
-```
-
-`requirements.lock` 里是最后一次测试通过时每个库的确切版本，便携包里装的就是这些。以后重装时如果新版本出了问题，改用 `pip install -r requirements.lock` 就能装回一模一样的环境。yt-dlp 例外，YouTube 放不了时要更新它（见 [YouTube](#youtube)）。
-
-</details>
+> [!NOTE]
+> <details>
+> <summary><b>点开看：旧版安装教程（1.0.x：不用设置页面，自己创建机器人、填 <code>.env</code>）</b></summary>
+>
+> 1.1.0 之前的安装方法，现在也还能用。需要 Windows 和 Python 3.10 以上（测试用的是 3.14）。用便携包但不想用设置页面的话，跳过第 1 步和第 4 步，做完第 2、3 步之后双击 `启动普瑞赛斯.bat`：`.env` 里已经有 token，就不会再打开设置页面。
+>
+> **1. 下载**
+>
+> 在 [Releases](https://github.com/ffde007/Priestess-Bot/releases) 页面下载 **Source code (zip)**，解压到一个固定的文件夹。以后的设置、数据和快捷方式都放在这个文件夹里。会用 Git 的话，也可以直接克隆：
+>
+> ```bash
+> git clone https://github.com/ffde007/Priestess-Bot.git
+> ```
+>
+> **以后更新**：先退出机器人，把新版 zip 里的文件复制到原来的文件夹、覆盖旧文件（用 Git 的话就是 `git pull`）。`.env`、`data/` 这些你自己的文件不在压缩包里，不会被覆盖。然后装一次新版的依赖，再启动：
+>
+> ```bash
+> .venv\Scripts\python -m pip install -r app\requirements.txt
+> ```
+>
+> **2. 创建 Discord 机器人**
+>
+> 1. 打开 <https://discord.com/developers/applications>，点 **New Application**
+> 2. 左侧 **Bot** → **Reset Token**，复制 token
+> 3. 左侧 **OAuth2** → **URL Generator**：
+>    - Scopes 勾选 `bot` 和 `applications.commands`
+>    - Bot Permissions 勾选 `View Channels`、`Send Messages`、`Embed Links`、`Connect`、`Speak`
+> 4. 打开生成的链接，把机器人拉进你的服务器
+> 5. **关掉 Public Bot**：先到左侧 **Installation** 页把 **Install Link** 改成 **None** 并保存（不然关不掉），再回到 **Bot** 页把 **Public Bot** 关掉。这样只有你自己能邀请她，别人拿到邀请链接也加不了。这一步很重要：不管她在哪个服务器被 @，用的都是你电脑上的程序和你的 API 密钥，花的是你的钱。
+> 6. **建议打开 Message Content Intent**（也在 **Bot** 页，私人服务器不需要审核，打开就能用）。原因见[聊天](#聊天)一节。其他 Privileged Gateway Intents 都不需要。
+>
+> **3. 配置**
+>
+> ```bash
+> copy .env.example .env
+> ```
+>
+> 用记事本打开 `.env`，每一项都有说明。先填下面几项就能用：
+>
+> | 设置 | 说明 |
+> | --- | --- |
+> | `DISCORD_TOKEN` | 上一步复制的 token，**必填** |
+> | `ALLOWED_GUILD_IDS` | **强烈建议填**：她可以待的服务器 ID，几个用逗号隔开 |
+> | `DEV_GUILD_ID` | 你服务器的 ID。填了斜杠命令马上就能用，但只同步到这一个服务器；不填是全局同步，最多要等一小时才出现 |
+> | `DEEPSEEK_API_KEY` 或 `ANTHROPIC_API_KEY` | 开启聊天，见[聊天](#聊天)。不填也能点歌 |
+>
+> 服务器 ID 的拿法：Discord 设置里打开开发者模式，右键服务器 → 复制服务器 ID。
+>
+> 填了 `ALLOWED_GUILD_IDS` 后，万一她被拉进别的服务器，会马上退出，不回复任何消息、不调用 API。想让她去朋友的服务器，把那个服务器的 ID 加进来就行。留空时不限制服务器，日志里会提醒她在几个服务器里。（以后用设置页面保存时，勾选一个服务器就把它填进 `DEV_GUILD_ID`，勾选几个就把 `DEV_GUILD_ID` 留空。）
+>
+> 改了 `.env` 之后，从托盘「重新启动」就会读到新的设置。
+>
+> **4. 运行**
+>
+> 双击 `PRTS.bat`。第一次会自动建好 `.venv`、装好依赖，并在这个文件夹里生成 `PRTS` 快捷方式。
+>
+> - **平时启动**：双击 `PRTS` 快捷方式，她就在托盘里运行，没有命令行窗口。移动了文件夹之后，双击一次 `启动普瑞赛斯.bat`，`PRTS` 快捷方式和开机自启动会自己改好。
+> - **调试**：双击 `PRTS.bat` 会带着命令行窗口运行，能直接看到输出。
+> - 托盘菜单、开机自启动、ffmpeg 和 Node.js 和新版一样，见上面的「平时使用」。
+>
+> </details>
 
 ## 命令
 
@@ -186,7 +202,7 @@ python -m venv .venv
 | 塞壬唱片 | 官网的歌曲链接 |
 | YouTube | `youtube.com/watch?v=…`、`youtu.be/…`、`youtube.com/shorts/…`、`youtube.com/playlist?list=…` |
 
-- 歌单一次最多添加 100 首（`config.py` 里的 `MAX_PLAYLIST_ITEMS`）。
+- 歌单一次最多添加 100 首（`app/config.py` 里的 `MAX_PLAYLIST_ITEMS`）。
 - **YouTube 只能用链接**，不能按歌名搜索（它的搜索结果什么内容都有），`/play` `/search` 的平台里也没有它。机器人只取出视频或播放列表的 ID，重新拼成标准链接再交给 yt-dlp，其他形式的 YouTube 链接（跳转页、同意页等）不支持。
 
 **按歌名搜索**
@@ -213,7 +229,7 @@ python -m venv .venv
 
 其他干员曲会说出 MV 角色和相关活动，活动原声会说出活动名。B站 / YouTube 链接里的明日方舟歌曲也能被认出来，前提是标题里带「明日方舟」「塞壬」「Arknights」之类的字样；Eclipse 只要标题里有「Eclipse」和「Aimer」就算。
 
-这些对应关系来自 PRTS Wiki 的音乐列表，写在 `siren_lore.py` 里，她的专属台词也在那里，可以自己改或者加。
+这些对应关系来自 PRTS Wiki 的音乐列表，写在 `app/siren_lore.py` 里，她的专属台词也在那里，可以自己改或者加。
 
 ### 网易云音乐
 
@@ -231,7 +247,7 @@ python -m venv .venv
 **自动换源**（默认开启）：网易云的歌放不了时，机器人会在 Bilibili 上搜同一首歌，挑一个最像原曲的来播，并在频道里提示「已换成 Bilibili 上的 …」。不想要换源的话，在 `.env` 里把 `NETEASE_FALLBACK=` 留空，放不了的歌就会直接跳过。
 
 <details>
-<summary>换源时怎么挑</summary>
+<summary><b>换源时怎么挑</b></summary>
 
 输入文字点的歌用你输入的原话搜，链接里的歌用「歌名 + 歌手」搜（YouTube 只用链接，不参与换源）。
 
@@ -282,12 +298,12 @@ runtime\python -m pip install -U "yt-dlp[default]"
 
 ### 人设
 
-- **台词**：机器人发出的所有消息都是普瑞赛斯的口吻（平静、从容、带一点调侃，喜欢用声音和寂静作比喻），每种情况有几条随机变体，都写在 `persona.py` 的 `LINES` 里，可以自己改。歌名、链接、序号这些信息照常显示。聊天的人设和规则写在同一个文件的 `CHAT_SYSTEM_PROMPT` 里。
+- **台词**：机器人发出的所有消息都是普瑞赛斯的口吻（平静、从容、带一点调侃，喜欢用声音和寂静作比喻），每种情况有几条随机变体，都写在 `app/persona.py` 的 `LINES` 里，可以自己改。歌名、链接、序号这些信息照常显示。聊天的人设和规则写在同一个文件的 `CHAT_SYSTEM_PROMPT` 里。
 - **称呼**：服务器的主人是她的「博士」，其他人按昵称称呼。
 - **部署者和博士**：机器人有两种「主人」。
   - **部署者**是在开发者后台拥有这个机器人应用的人，也就是用自己的 token 和 API 密钥运行它的人。只有部署者能用管理整个机器人的指令（`/余额`、`/聊天统计`、`/语音模块`、`/同步活动`、`/推送提醒`），聊天条数和联网搜索次数也不受限制。
   - **博士**是每个服务器的主人：在自己的服务器里被称作博士，不受每人每天的条数限制，但全服务器的每日总量对博士也有效。
-  - 只在你自己的服务器里用时，你同时是这两种人，没有区别。代码在 `access.py`。
+  - 只在你自己的服务器里用时，你同时是这两种人，没有区别。代码在 `app/access.py`。
 
 ### 能聊什么
 
@@ -305,14 +321,14 @@ runtime\python -m pip install -U "yt-dlp[default]"
 - 她知道现在的日期和时间（运行机器人那台电脑的时区）。
 - 问天气时会查 [Open-Meteo](https://open-meteo.com)（免费，不需要密钥），能查任意城市的当前天气和最多 7 天预报。
 - 问新闻、游戏更新这类她不知道的事时，会联网搜索；有人发来网页链接，她也能读正文。闲聊和角色设定不会去搜。
-  - 用 DeepSeek 时，搜索和读网页由机器人自己调用 [DeepSeek 的 Search / Fetch API](https://api-docs.deepseek.com/guides/search/)（代码在 `websearch.py`），只把前 5 条结果的摘要交给她，每条消息最多 2 次（`CHAT_SEARCH_MAX_USES`）。结果里有 `blocked_words.txt`「回避」词的会被去掉，搜索词本身命中也不会搜。
+  - 用 DeepSeek 时，搜索和读网页由机器人自己调用 [DeepSeek 的 Search / Fetch API](https://api-docs.deepseek.com/guides/search/)（代码在 `app/websearch.py`），只把前 5 条结果的摘要交给她，每条消息最多 2 次（`CHAT_SEARCH_MAX_USES`）。结果里有 `blocked_words.txt`「回避」词的会被去掉，搜索词本身命中也不会搜。
   - 用 Claude 时用的是 Claude 自带的网页搜索（由 Anthropic 那边执行）。
 - 价格、机票酒店、票务、汇率、比分、营业时间这类实时信息，就算没有专门的工具，她也会先搜；搜不到确切答案时，会说出最接近的信息，并给一个能直接打开的查询链接（比如填好机场和日期的 Google Flights 页面）。万一她没试就说「查不了」，机器人会让她先搜一次再回答（那句放弃的话不会发出来）。
 
-**实时查询**（可选：机票、酒店、商品、地图、识图）：在 `.env` 填 `SERPAPI_KEY` 后开启（在 [serpapi.com](https://serpapi.com) 注册免费账号，每月 250 次）。数据来自 Google，代码在 `travel.py`、`lookup.py`、`serp.py`。没填密钥时这些工具不出现，问机票时她会给出填好条件的 Google Flights 链接。
+**实时查询**（可选：机票、酒店、商品、地图、识图）：在 `.env` 填 `SERPAPI_KEY` 后开启（在 [serpapi.com](https://serpapi.com) 注册免费账号，每月 250 次）。数据来自 Google，代码在 `app/travel.py`、`app/lookup.py`、`app/serp.py`。没填密钥时这些工具不出现，问机票时她会给出填好条件的 Google Flights 链接。
 
 <details>
-<summary>能查什么、怎么算次数</summary>
+<summary><b>能查什么、怎么算次数</b></summary>
 
 - **机票**（Google Flights）：「5 月 1 号去 5 号回，上海到东京」列出几班航班的价格、航司、起降时间、经停和时长，附完整结果链接。纽约这类有几个机场的城市会一起查。
 - **哪天飞最便宜**（价格日历）：「三月份哪几天飞大阪最便宜，玩五天」列出最便宜的日期。
@@ -329,11 +345,11 @@ runtime\python -m pip install -U "yt-dlp[default]"
 **表情包**：只发「哈哈」「？」「好耶」「无语」「呜呜」「就这」「在吗」这类短反应，或者只 @ 她不说话、只发 emoji 时，她回一个自己的表情，不调用 API。同一个频道 5 秒内最多发一个（`STICKER_COOLDOWN`），这期间的短反应她改成在那条消息上点一个表情回应，不再另发消息。她自己聊天时也偶尔会在回复后面跟一个表情（模型写 `[表情:无奈]`，机器人换成表情图）。`CHAT_STICKERS=off` 可以关掉。
 
 <details>
-<summary>表情图怎么准备</summary>
+<summary><b>表情图怎么准备</b></summary>
 
 - **表情图不在仓库里**，要自己准备图片，在开发者后台 **Emojis** 页上传成应用表情（不占服务器的表情位）。
 - 机器人按名字里的编号认图（`_20261102031217_309_15` 认作 309），改名的话保留编号就行，比如 `laugh_309`。
-- 在 `stickers.py` 的 `STICKERS` 里把每种心情对应到你的表情名里的编号；触发词和表情的对应也写在这个文件里。不想弄的话设 `CHAT_STICKERS=off`。
+- 在 `app/stickers.py` 的 `STICKERS` 里把每种心情对应到你的表情名里的编号；触发词和表情的对应也写在这个文件里。不想弄的话设 `CHAT_STICKERS=off`。
 
 </details>
 
@@ -342,7 +358,7 @@ runtime\python -m pip install -U "yt-dlp[default]"
 下面这些都在调用 API 之前处理，不花钱。
 
 - **敏感话题**：消息里有 `blocked_words.txt` 里的词（现实政治、战争冲突、歧视用语、色情、毒品、游戏圈引战），她会用预先写好的台词带过，不交给模型。歌名和上传者里有这些词的歌也不会放、不会出现在搜索列表里。
-  - 仓库里只带一份很短的示例表 `blocked_words.example.txt`：复制一份改名为 `blocked_words.txt`，按你的服务器加上自己的词（`blocked_words.txt` 不会被提交到 Git；没有它时读示例表）。文件随时改，保存就生效；匹配不分大小写、空格和繁简体。
+  - 仓库里只带一份很短的示例表 `app/blocked_words.example.txt`：复制到主文件夹（和 `.env` 放在一起），改名为 `blocked_words.txt`，按你的服务器加上自己的词（`blocked_words.txt` 不会被提交到 Git；没有它时读示例表）。文件随时改，保存就生效；匹配不分大小写、空格和繁简体。
   - `[关心]` 一节的词（自杀、不想活……）换成认真、温柔的回应，提醒对方找身边的人或心理援助热线。
   - 被拦下的消息记在 `logs/blocked.log`，可以看看有没有误伤（比如「自杀小队」这种电影名也会被当成关心类）。默认只记时间、类别、命中的词和频道；想看是谁说的、说了什么，在 `.env` 设 `LOG_BLOCKED_TEXT=on`（会记下昵称和消息前 200 字，其中可能有很私人的内容）。文件超过 1 MB 会轮换，只留一份旧的。
 - **人设里的规矩**：关键词没拦住的，靠人设里的「不聊的话题」：现实政治、宗教、民族、战争、现实人物八卦、游戏之间的拉踩，她都不评价、不站队，轻轻带过。DeepSeek 自己拒绝的内容（Content Exists Risk）也会换成她的台词，这条消息不会留在对话记录里。
@@ -364,7 +380,7 @@ runtime\python -m pip install -U "yt-dlp[default]"
 - 搜索次数用完后，她会告诉对方明天再查。
 
 <details>
-<summary>搜索次数为什么是硬性限制</summary>
+<summary><b>搜索次数为什么是硬性限制</b></summary>
 
 - **用 DeepSeek 时**：每次搜索在发出前就先记上，用完后机器人直接不执行搜索。
 - **用 Claude 时**：Claude 自带的搜索在 Anthropic 那边执行。每次请求发出前，机器人先占用这次最多能搜的次数（剩余次数不够时降到剩余次数），回复后把没用掉的退回，所以几个频道同时问也不会超；用完后把搜索工具撤掉。
@@ -411,7 +427,7 @@ runtime\python -m pip install -U "yt-dlp[default]"
 
 **设置**：声音设置（GPT-SoVITS 文件夹、模型、参考音频、停顿、可选的后期滤镜 `post_filter`）写在一个 JSON 文件里：把 `voices/example.json` 复制成 `voices/voice.json`，改成你自己的路径（或者用 `.env` 的 `VOICE_CONFIG` 指向别的文件）。`voices/` 里除了示例之外的 JSON 都不会被提交到 Git。`VOICE_PROMPT=clip` 是 t1（带参考文本，语调也跟参考走），`none` 是 t4（只取音色），留空按 JSON 里写的。
 
-模型和参考音频都只在本机，不上传。分句和有声书一样：破折号处停 0.8 秒、引号括号不念、太短的句子并进下一句，偶尔卡住或念太快的一句会换个随机种子重来。找不到这些文件，或者 JSON 里缺了必填的项（GPT-SoVITS 文件夹、两个模型、参考音频）时，这部分功能自动关闭，日志里会写明原因，其他功能照常。代码在 `speech.py` 和 `cogs/speech.py`。
+模型和参考音频都只在本机，不上传。分句和有声书一样：破折号处停 0.8 秒、引号括号不念、太短的句子并进下一句，偶尔卡住或念太快的一句会换个随机种子重来。找不到这些文件，或者 JSON 里缺了必填的项（GPT-SoVITS 文件夹、两个模型、参考音频）时，这部分功能自动关闭，日志里会写明原因，其他功能照常。代码在 `app/speech.py` 和 `app/cogs/speech.py`。
 
 - **`/语音模块 [开/关]`**（只有部署者能用）：在后台隐藏启动 GPT-SoVITS（用它自带的 Python，日志在 `logs/sovits.log`），加载模型后通知「我可以说话了」，大约半分钟。它占用显卡，**没人在说话模式里 5 分钟就自动关掉**（`SOVITS_IDLE_MINUTES`）；机器人退出或重新启动时也会关掉。如果 GPT-SoVITS 已经在别处开着（比如在做有声书），机器人直接用它，但不会去关它。
 - **托盘菜单**：右键图标能看到「语音模块：已关闭 / 正在启动 / 运行中（说话模式：开/关）」，下面一项可以直接开启或关闭，和 `/语音模块` 一样；状态变化时托盘会弹通知。
@@ -429,7 +445,7 @@ runtime\python -m pip install -U "yt-dlp[default]"
 
 活动数据来自 [游时 Playtime](https://github.com/ZhenyuFu039/acg-calendar)（官方公告、PRTS 等来源），支持明日方舟、终末地、碧蓝航线、绝区零、NIKKE。
 
-**安装**：游时需要 `tzdata`（已写进 `requirements.txt`）。把游时放在这个文件夹的旁边（`../Playtime-v0.2.0-windows-x64`），或者在 `.env` 的 `PLAYTIME_DIR` 填它的位置。找不到游时文件夹时，这部分功能自动关闭，其他功能照常。
+**安装**：游时需要 `tzdata`（已写进 `app/requirements.txt`）。把游时放在这个文件夹的旁边（`../Playtime-v0.2.0-windows-x64`），或者在 `.env` 的 `PLAYTIME_DIR` 填它的位置。找不到游时文件夹时，这部分功能自动关闭，其他功能照常。
 
 **同步**：游时不常驻后台。机器人启动时，在后台隐藏启动一次游时，让它同步全部游戏、导出数据到 `data/calendar.json`，然后马上关掉，之后的查询和提醒都读这个文件。机器人一直开着的话，每 `PLAYTIME_REFRESH_HOURS` 小时（默认 24）重复一次；3 小时内重启不会重复同步。首次同步要下载活动头图，大约 6 分钟；之后大约 1–2 分钟，都在后台进行，不影响点歌。部署者可以用 `/同步活动` 手动再同步一次。
 
@@ -439,23 +455,23 @@ runtime\python -m pip install -U "yt-dlp[default]"
 
 1. **开场白**：她的一句话（第一组前面还有一句晚上好），按情况挑（有要结束的 / 有新开始的 / 很平静 / 没有活动）。没有结束日期的长期项目（常驻申领、玩法更新）列在开场白下面一行。
 2. **小卡片**：列出「接下来 3 天结束」的活动，用 Discord 的时间格式，每个人看到的是自己当地的时间和倒计时。
-3. **时间轴图**（仿游时）：左边是活动头图和名字，中间是从 3 天前到 14 天后的时间条（条里铺着头图，虚线是今天），右边是结束时间和剩余时间；3 天内结束标红，7 天内标黄。图里是北京时间。头图用的是游时同步时缓存的官方图，没有图的显示一个写着类型的色块。图在本地用 Pillow 画，不花钱，代码在 `calendar_image.py`。
+3. **时间轴图**（仿游时）：左边是活动头图和名字，中间是从 3 天前到 14 天后的时间条（条里铺着头图，虚线是今天），右边是结束时间和剩余时间；3 天内结束标红，7 天内标黄。图里是北京时间。头图用的是游时同步时缓存的官方图，没有图的显示一个写着类型的色块。图在本地用 Pillow 画，不花钱，代码在 `app/calendar_image.py`。
    - 一个游戏不超过 10 行时只发一张图；超过的话按「快结束了（7 天内）」「明天开始」「还在进行」分开发，每张图前面有她的一句话，一张最多 8 行，再多就分成「（1/2）」「（2/2）」。没有内容的段落不发。
 
 <details>
-<summary>提醒的时间规则和设置</summary>
+<summary><b>提醒的时间规则和设置</b></summary>
 
 - 都从明天 0 点算起，所以晚上发的时候不会列出已经结束的活动。一项活动在结束前的 3 个晚上都会被提到（`CALENDAR_END_DAYS`），「明天开始」看几天由 `CALENDAR_START_DAYS` 决定。
 - 活动和兑换商店在结束前 24 小时、1 小时各提醒一次（`CALENDAR_ALERTS=off` 可以关掉），只对公告写明的确切时间提醒。
 - 发过的记在 `data/calendar_sent.json`，重启不会重发；机器人没开时错过的，6 小时内会补发。
 - `CALENDAR_GAMES` 选哪些游戏；`CALENDAR_PING_ROLE_ID` 可以设一个身份组来 @（每批只 @ 一次，默认不 @）。
-- 开场白的台词在 `persona.py` 的 `cal_game_*`；游戏的叫法（罗德岛、塔卫二）和卡片颜色在 `cogs/calendar.py` 的 `GAME_NICKNAMES`、`GAME_COLORS`。
+- 开场白的台词在 `app/persona.py` 的 `cal_game_*`；游戏的叫法（罗德岛、塔卫二）和卡片颜色在 `app/cogs/calendar.py` 的 `GAME_NICKNAMES`、`GAME_COLORS`。
 - 部署者可以用 `/推送提醒` 把今天的提醒再发一次，不影响每晚的定时提醒。
 - 这些提醒都是预先写好的台词，**不调用付费 API**。
 
 </details>
 
-**干员生日**：每晚的提醒发完后，如果当天有干员过生日，她最后再说一句，比如「对了——今天是战车、缪尔赛思、海霓的生日」；阿米娅生日那天有专门的一句。生日来自游戏里每位干员档案的【生日】一栏（通过公开的 ArknightsGameData 数据），约 375 位干员，没有公开生日的不算，异格干员和原干员算一个。仓库里带一份 `assets/operator_birthdays.json`，机器人每周自动重新下载一次（存到 `data/`），新干员会自己加进来。
+**干员生日**：每晚的提醒发完后，如果当天有干员过生日，她最后再说一句，比如「对了——今天是战车、缪尔赛思、海霓的生日」；阿米娅生日那天有专门的一句。生日来自游戏里每位干员档案的【生日】一栏（通过公开的 ArknightsGameData 数据），约 375 位干员，没有公开生日的不算，异格干员和原干员算一个。仓库里带一份 `app/assets/operator_birthdays.json`，机器人每周自动重新下载一次（存到 `data/`），新干员会自己加进来。
 
 **在聊天里问**：问她「明日方舟现在有什么活动」「兑换商店什么时候关」时，她会先查这份日历，不走网页搜索，不额外花钱。
 
@@ -463,7 +479,7 @@ runtime\python -m pip install -U "yt-dlp[default]"
 
 **斜杠命令不出现**：没填 `DEV_GUILD_ID` 时全局同步要等一会儿；或者邀请链接里没勾 `applications.commands`。
 
-**机器人进了频道、头像变绿但没声音**：先检查 davey 的版本：`runtime\python -m pip show davey`（从源码安装的话是 `.venv\Scripts\python -m pip show davey`）。必须是 0.1.x。davey 0.2 和 discord.py 2.7.1 不兼容，语音端到端加密（DAVE）会一直无法就绪，发出去的声音别人都听不到。`requirements.txt` 已经限制了版本，用它安装就不会出问题。也确认一下机器人有 `Speak` 权限。
+**机器人进了频道、头像变绿但没声音**：先检查 davey 的版本：`runtime\python -m pip show davey`（从源码安装的话是 `.venv\Scripts\python -m pip show davey`）。必须是 0.1.x。davey 0.2 和 discord.py 2.7.1 不兼容，语音端到端加密（DAVE）会一直无法就绪，发出去的声音别人都听不到。`app/requirements.txt` 已经限制了版本，用它安装就不会出问题。也确认一下机器人有 `Speak` 权限。
 
 **网易云全部提示地区限制**：见上面[网易云音乐](#网易云音乐)一节。
 
@@ -497,71 +513,77 @@ runtime\python -m pip install -U "yt-dlp[default]"
 
 **怎么删除**：退出机器人后，删掉 `data/chat_usage.json` 和 `logs/` 里的文件即可。删掉 `data/serpapi_usage.json` 会让每月查询次数从 0 重新算。
 
-**发现了安全问题**：请不要开公开 issue，按 [SECURITY.md](SECURITY.md) 里的方法私下报告。密钥泄露后怎么重置，也写在里面。
+**发现了安全问题**：请不要开公开 issue，按 [SECURITY.md](.github/SECURITY.md) 里的方法私下报告。密钥泄露后怎么重置，也写在里面。
 
 ## 开发
 
 <details>
-<summary>项目结构</summary>
+<summary><b>项目结构</b></summary>
 
 ```
-bot.py                     入口，加载命令并同步斜杠命令
-tray.py                    托盘版入口（PRTS 快捷方式用的就是它）
 启动普瑞赛斯.bat           平时启动：没有窗口，第一次会打开设置页面
 PRTS.bat                   调试启动：带命令行窗口
-wizard.py                  设置页面：只在本机打开的网页，检查 token、列出服务器、写 .env
-assets/wizard.html         设置页面的网页
-assets/priestess.ico       托盘和快捷方式的图标
-config.py                  读取 .env 配置
-persona.py                 普瑞赛斯的台词（LINES）和聊天人设（CHAT_SYSTEM_PROMPT）
-cogs/music.py              所有斜杠命令和语音频道事件
-cogs/chat.py               @ 她聊天：DeepSeek / Claude、对话记录、控制音乐的工具
-access.py                  部署者是谁、可以待在哪些服务器（ALLOWED_GUILD_IDS）
-moderation.py              不聊的话题：读 blocked_words.txt（没有时读 blocked_words.example.txt），拦下的记在 logs/blocked.log
-stickers.py                表情包：触发词、编号和心情的对应
-usage.py                   每日聊天额度和 token 统计（data/chat_usage.json）
-weather.py                 天气查询（Open-Meteo）
-websearch.py               联网搜索和读网页（DeepSeek Search / Fetch API）
-serp.py                    SerpApi 请求和每月额度
-travel.py                  机票（含价格日历、特价）和酒店（Google Flights / Hotels）
-lookup.py                  商品价格、识图、地图和路线（Google Shopping / Lens / Maps）
-gamecal.py                 游时：启动一次、同步、导出、关闭，以及读取活动数据
-cogs/calendar.py           /活动、/同步活动、/推送提醒、频道提醒和每日简报
-calendar_image.py          活动时间轴图（Pillow，仿游时）
-cogs/balance.py            /余额：DeepSeek 余额和花费记录（data/balance.json）
-cogs/speech.py             /语音模块、/说话：说话模式（读出聊天回复）
-speech.py                  GPT-SoVITS 的启动、关闭和合成（读 VOICE_CONFIG 指定的声音设置）
+.env.example               设置模板（设置页面保存后，旁边会多一个 .env）
 voices/example.json        说话模式的声音设置示例（只有路径和参数，不含模型和音频）
-cogs/help.py               /帮助
-birthdays.py               干员生日（assets/operator_birthdays.json，每周更新）
-music/player.py            每个服务器的播放队列和播放循环
-music/resolver.py          根据链接或平台选择对应的音源
-music/track.py             Track / Stream 数据结构
-music/sources/youtube.py   YouTube（yt-dlp）
-music/sources/bilibili.py  Bilibili（Web API + WBI 签名）
-music/sources/netease.py   网易云音乐（eapi 接口）
-music/sources/siren.py     塞壬唱片（官方接口，本地搜索）
-music/sources/links.py     展开 b23.tv、163cn.tv 短链接（每一跳都必须留在平台自己的网站上）
-siren_lore.py              塞壬唱片歌曲对应的角色、活动，和她的专属台词
-docs/images/               README 用的图
+app/                       程序本身
+  bot.py                   入口，加载命令并同步斜杠命令
+  tray.py                  托盘版入口（PRTS 快捷方式用的就是它）
+  wizard.py                设置页面：只在本机打开的网页，检查 token、列出服务器、写 .env
+  assets/wizard.html       设置页面的网页
+  assets/priestess.ico     托盘和快捷方式的图标
+  config.py                读取 .env 配置，定义主文件夹（data/、logs/ 都在主文件夹里）
+  persona.py               普瑞赛斯的台词（LINES）和聊天人设（CHAT_SYSTEM_PROMPT）
+  cogs/music.py            所有斜杠命令和语音频道事件
+  cogs/chat.py             @ 她聊天：DeepSeek / Claude、对话记录、控制音乐的工具
+  access.py                部署者是谁、可以待在哪些服务器（ALLOWED_GUILD_IDS）
+  moderation.py            不聊的话题：读主文件夹的 blocked_words.txt（没有时读 blocked_words.example.txt），拦下的记在 logs/blocked.log
+  stickers.py              表情包：触发词、编号和心情的对应
+  usage.py                 每日聊天额度和 token 统计（data/chat_usage.json）
+  weather.py               天气查询（Open-Meteo）
+  websearch.py             联网搜索和读网页（DeepSeek Search / Fetch API）
+  serp.py                  SerpApi 请求和每月额度
+  travel.py                机票（含价格日历、特价）和酒店（Google Flights / Hotels）
+  lookup.py                商品价格、识图、地图和路线（Google Shopping / Lens / Maps）
+  gamecal.py               游时：启动一次、同步、导出、关闭，以及读取活动数据
+  cogs/calendar.py         /活动、/同步活动、/推送提醒、频道提醒和每日简报
+  calendar_image.py        活动时间轴图（Pillow，仿游时）
+  cogs/balance.py          /余额：DeepSeek 余额和花费记录（data/balance.json）
+  cogs/speech.py           /语音模块、/说话：说话模式（读出聊天回复）
+  speech.py                GPT-SoVITS 的启动、关闭和合成（读 VOICE_CONFIG 指定的声音设置）
+  cogs/help.py             /帮助
+  birthdays.py             干员生日（assets/operator_birthdays.json，每周更新）
+  music/player.py          每个服务器的播放队列和播放循环
+  music/resolver.py        根据链接或平台选择对应的音源
+  music/track.py           Track / Stream 数据结构
+  music/sources/youtube.py   YouTube（yt-dlp）
+  music/sources/bilibili.py  Bilibili（Web API + WBI 签名）
+  music/sources/netease.py   网易云音乐（eapi 接口）
+  music/sources/siren.py     塞壬唱片（官方接口，本地搜索）
+  music/sources/links.py     展开 b23.tv、163cn.tv 短链接（每一跳都必须留在平台自己的网站上）
+  siren_lore.py            塞壬唱片歌曲对应的角色、活动，和她的专属台词
+  requirements.txt         依赖；requirements.lock 是测试通过时的确切版本
+docs/images/               README 用的图（不打进便携包）
 tools/build_portable.py    打便携包：官方的嵌入版 Python + requirements.lock 里的库 + 程序文件
 tools/wizard_demo.py       不用 token 预览设置页面（Discord 和密钥检查都是假的）
 .github/workflows/         发布 Release 时自动打便携包并挂到 Release 上
+.github/SECURITY.md        安全问题怎么报告
 ```
+
+运行之后，主文件夹里还会出现 `.env`、`data/`、`logs/` 和 `PRTS` 快捷方式；便携包还多一个 `runtime/`（自带的 Python）。
 
 **打便携包**：用 Python 3.14 运行 `python tools/build_portable.py --version v1.2.3 --test`，结果在 `build/` 里。只打包 Git 认识的文件，`.env`、`data/`、`logs/` 不会进去。
 
 </details>
 
-**添加新平台**：在 `music/sources/` 里写一个类，实现 `matches_url`、`search`、`from_url`、`resolve`、`close`，再在 `music/resolver.py` 和 `cogs/music.py` 的 `SOURCE_CHOICES` 里注册就行。
+**添加新平台**：在 `app/music/sources/` 里写一个类，实现 `matches_url`、`search`、`from_url`、`resolve`、`close`，再在 `app/music/resolver.py` 和 `app/cogs/music.py` 的 `SOURCE_CHOICES` 里注册就行。
 
 ## 许可证和致谢
 
 - **代码**：[MIT](LICENSE)。MIT 只管源代码；下面提到的角色、图片和第三方数据不在此列，各自沿用原有的版权或许可。
 - **角色和图片**：普瑞赛斯和《明日方舟》的角色、名字、图片（包括 `assets/priestess*.png`、`assets/priestess.ico`，以及 `docs/images/` 里的立绘、头像和活动头图）版权归 [鹰角网络](https://www.hypergryph.com) 所有，不在 MIT 许可证范围内。截图里的专辑封面归各自的版权方所有。这是一个非官方粉丝项目，与鹰角网络无关。台词都是原创的，没有照搬游戏文本。
 - **塞壬唱片**的歌曲和专辑简介由机器人在播放时从 [官网](https://monster-siren.hypergryph.com) 读取，仓库里不带音频。
-- `siren_lore.py` 里歌曲和角色、活动的对应关系整理自 [PRTS Wiki](https://prts.wiki) 的音乐列表，PRTS Wiki 的内容使用 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 许可。
-- 干员生日（`assets/operator_birthdays.json`）来自 [Kengxxiao/ArknightsGameData](https://github.com/Kengxxiao/ArknightsGameData)。
+- `app/siren_lore.py` 里歌曲和角色、活动的对应关系整理自 [PRTS Wiki](https://prts.wiki) 的音乐列表，PRTS Wiki 的内容使用 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 许可。
+- 干员生日（`app/assets/operator_birthdays.json`）来自 [Kengxxiao/ArknightsGameData](https://github.com/Kengxxiao/ArknightsGameData)。
 - 游戏活动日历来自 [游时 Playtime](https://github.com/ZhenyuFu039/acg-calendar)。
 - 天气来自 [Open-Meteo](https://open-meteo.com)。说话模式用的是 [GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS)。
 

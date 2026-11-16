@@ -13,9 +13,11 @@ from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
+import config
+
 log = logging.getLogger(__name__)
 
-USAGE_FILE = Path(__file__).parent / "data" / "chat_usage.json"
+USAGE_FILE = config.HOME / "data" / "chat_usage.json"
 KEEP_DAYS = 7
 USER_FIELDS = ("messages", "searches", "tasks", "input", "cache_read", "output")
 DAY_FIELDS = ("messages", "blocked", "stickers", "quick")

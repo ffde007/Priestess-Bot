@@ -9,11 +9,11 @@ if exist "%PY%" goto start
 echo First start: installing the libraries. This takes a few minutes...
 python -m venv .venv
 if errorlevel 1 goto nopython
-"%PY%" -m pip install -r requirements.txt
+"%PY%" -m pip install -r app\requirements.txt
 if errorlevel 1 goto failed
 :start
-if not exist PRTS.lnk "%PY%" tray.py --shortcut
-start "" "%PY:python.exe=pythonw.exe%" tray.py
+if not exist PRTS.lnk "%PY%" app\tray.py --shortcut
+start "" "%PY:python.exe=pythonw.exe%" app\tray.py
 exit /b
 :nopython
 echo.

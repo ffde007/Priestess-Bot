@@ -246,18 +246,19 @@
 
 **自动换源**（默认开启）：网易云的歌放不了时，机器人会在 Bilibili 上搜同一首歌，挑一个最像原曲的来播，并在频道里提示「已换成 Bilibili 上的 …」。不想要换源的话，在 `.env` 里把 `NETEASE_FALLBACK=` 留空，放不了的歌就会直接跳过。
 
-<details>
-<summary><b>换源时怎么挑</b></summary>
-
-输入文字点的歌用你输入的原话搜，链接里的歌用「歌名 + 歌手」搜（YouTube 只用链接，不参与换源）。
-
-- 时长要和网易云的原曲接近（相差不超过 20 秒或 15%）；按输入文字搜时没有参考时长，只排除 1 分钟以下的片段和 15 分钟以上的循环、合集
-- 标题要包含歌名（繁体和简体都算）；按输入文字搜时，输入的每个词都要出现在标题或上传者名字里
-- 排除翻唱、伴奏、KTV、现场、Remix、乐器演奏、鼓谱之类的版本（除非原曲标题本身就是这种版本）
-- 优先选歌手官方频道、Official、Hi-Res、无损、歌词版
-- 条件差不多时优先 Bilibili（排在 `NETEASE_FALLBACK` 前面的平台）
-
-</details>
+> [!TIP]
+> <details>
+> <summary><b>点开看：换源时怎么挑</b></summary>
+>
+> 输入文字点的歌用你输入的原话搜，链接里的歌用「歌名 + 歌手」搜（YouTube 只用链接，不参与换源）。
+>
+> - 时长要和网易云的原曲接近（相差不超过 20 秒或 15%）；按输入文字搜时没有参考时长，只排除 1 分钟以下的片段和 15 分钟以上的循环、合集
+> - 标题要包含歌名（繁体和简体都算）；按输入文字搜时，输入的每个词都要出现在标题或上传者名字里
+> - 排除翻唱、伴奏、KTV、现场、Remix、乐器演奏、鼓谱之类的版本（除非原曲标题本身就是这种版本）
+> - 优先选歌手官方频道、Official、Hi-Res、无损、歌词版
+> - 条件差不多时优先 Bilibili（排在 `NETEASE_FALLBACK` 前面的平台）
+>
+> </details>
 
 **想播放网易云的原始音源**，需要让机器人用国内 IP 访问网易云：
 
@@ -327,31 +328,33 @@ runtime\python -m pip install -U "yt-dlp[default]"
 
 **实时查询**（可选：机票、酒店、商品、地图、识图）：在 `.env` 填 `SERPAPI_KEY` 后开启（在 [serpapi.com](https://serpapi.com) 注册免费账号，每月 250 次）。数据来自 Google，代码在 `app/travel.py`、`app/lookup.py`、`app/serp.py`。没填密钥时这些工具不出现，问机票时她会给出填好条件的 Google Flights 链接。
 
-<details>
-<summary><b>能查什么、怎么算次数</b></summary>
-
-- **机票**（Google Flights）：「5 月 1 号去 5 号回，上海到东京」列出几班航班的价格、航司、起降时间、经停和时长，附完整结果链接。纽约这类有几个机场的城市会一起查。
-- **哪天飞最便宜**（价格日历）：「三月份哪几天飞大阪最便宜，玩五天」列出最便宜的日期。
-- **特价机票**：「这周末从上海出发去哪玩便宜」列出目的地、价格、比平时便宜多少。
-- **酒店**（Google Hotels）：每晚价格（含税）、总价、评分。
-- **商品价格**（Google Shopping，美国）：「990 PRO 4TB 哪里最便宜」列出各家店的现价和链接。
-- **地图**（Google Maps）：「新宿现在还开着的拉面店」列出评分、地址、此刻是否营业、电话；「从新宿开车去横滨要多久」按实时路况给出几条路线。
-- **识图**（Google Lens）：她本来看不到图片。有人发图问「这是谁」「在哪买」，或者只发一张图给她（也可以回复别人的图片问她），她会用 Google Lens 查网上相似的图片来判断。只是顺手分享的图她不会去查。
-
-每次查询算一次联网搜索（从每人每天的次数里扣）。机器人还会记录当月用量，到 `SERPAPI_MONTHLY_LIMIT`（默认 230）就停，记录在 `data/serpapi_usage.json`。每次查询在发出前就先记上，失败了也不退回，所以同时查也不会超过这个数；但同一个密钥在别处用掉的次数机器人不知道，以 SerpApi 后台的用量为准。记录文件损坏时，实时查询会停下来，直到你修好或删掉它。
-
-</details>
+> [!NOTE]
+> <details>
+> <summary><b>点开看：能查什么、怎么算次数</b></summary>
+>
+> - **机票**（Google Flights）：「5 月 1 号去 5 号回，上海到东京」列出几班航班的价格、航司、起降时间、经停和时长，附完整结果链接。纽约这类有几个机场的城市会一起查。
+> - **哪天飞最便宜**（价格日历）：「三月份哪几天飞大阪最便宜，玩五天」列出最便宜的日期。
+> - **特价机票**：「这周末从上海出发去哪玩便宜」列出目的地、价格、比平时便宜多少。
+> - **酒店**（Google Hotels）：每晚价格（含税）、总价、评分。
+> - **商品价格**（Google Shopping，美国）：「990 PRO 4TB 哪里最便宜」列出各家店的现价和链接。
+> - **地图**（Google Maps）：「新宿现在还开着的拉面店」列出评分、地址、此刻是否营业、电话；「从新宿开车去横滨要多久」按实时路况给出几条路线。
+> - **识图**（Google Lens）：她本来看不到图片。有人发图问「这是谁」「在哪买」，或者只发一张图给她（也可以回复别人的图片问她），她会用 Google Lens 查网上相似的图片来判断。只是顺手分享的图她不会去查。
+>
+> 每次查询算一次联网搜索（从每人每天的次数里扣）。机器人还会记录当月用量，到 `SERPAPI_MONTHLY_LIMIT`（默认 230）就停，记录在 `data/serpapi_usage.json`。每次查询在发出前就先记上，失败了也不退回，所以同时查也不会超过这个数；但同一个密钥在别处用掉的次数机器人不知道，以 SerpApi 后台的用量为准。记录文件损坏时，实时查询会停下来，直到你修好或删掉它。
+>
+> </details>
 
 **表情包**：只发「哈哈」「？」「好耶」「无语」「呜呜」「就这」「在吗」这类短反应，或者只 @ 她不说话、只发 emoji 时，她回一个自己的表情，不调用 API。同一个频道 5 秒内最多发一个（`STICKER_COOLDOWN`），这期间的短反应她改成在那条消息上点一个表情回应，不再另发消息。她自己聊天时也偶尔会在回复后面跟一个表情（模型写 `[表情:无奈]`，机器人换成表情图）。`CHAT_STICKERS=off` 可以关掉。
 
-<details>
-<summary><b>表情图怎么准备</b></summary>
-
-- **表情图不在仓库里**，要自己准备图片，在开发者后台 **Emojis** 页上传成应用表情（不占服务器的表情位）。
-- 机器人按名字里的编号认图（`_20261102031217_309_15` 认作 309），改名的话保留编号就行，比如 `laugh_309`。
-- 在 `app/stickers.py` 的 `STICKERS` 里把每种心情对应到你的表情名里的编号；触发词和表情的对应也写在这个文件里。不想弄的话设 `CHAT_STICKERS=off`。
-
-</details>
+> [!TIP]
+> <details>
+> <summary><b>点开看：表情图怎么准备</b></summary>
+>
+> - **表情图不在仓库里**，要自己准备图片，在开发者后台 **Emojis** 页上传成应用表情（不占服务器的表情位）。
+> - 机器人按名字里的编号认图（`_20261102031217_309_15` 认作 309），改名的话保留编号就行，比如 `laugh_309`。
+> - 在 `app/stickers.py` 的 `STICKERS` 里把每种心情对应到你的表情名里的编号；触发词和表情的对应也写在这个文件里。不想弄的话设 `CHAT_STICKERS=off`。
+>
+> </details>
 
 ### 不聊的话题
 
@@ -379,14 +382,15 @@ runtime\python -m pip install -U "yt-dlp[default]"
 - 条数在排队之前就先记上，同时发很多条也不会超过额度。到了额度她说一次「今天累了」，之后当天只在这个人的消息上点一个「憔悴」的表情，点歌照常。
 - 搜索次数用完后，她会告诉对方明天再查。
 
-<details>
-<summary><b>搜索次数为什么是硬性限制</b></summary>
-
-- **用 DeepSeek 时**：每次搜索在发出前就先记上，用完后机器人直接不执行搜索。
-- **用 Claude 时**：Claude 自带的搜索在 Anthropic 那边执行。每次请求发出前，机器人先占用这次最多能搜的次数（剩余次数不够时降到剩余次数），回复后把没用掉的退回，所以几个频道同时问也不会超；用完后把搜索工具撤掉。
-- 如果这个频道的对话里已经有过 Claude 的搜索结果，工具撤不掉（撤掉的话请求可能被拒绝，暂停中的回复也必须带着它），这时机器人不会再发出能搜索的请求：新消息会让这个频道的对话重新开始（和聊满 40 条时一样）再回答；如果是回复到一半用完，她会停在那里：已经写出的部分照常发出，后面接一句今天的搜索次数用完了，这段回答以纯文字留在对话里。
-
-</details>
+> [!NOTE]
+> <details>
+> <summary><b>点开看：搜索次数为什么是硬性限制</b></summary>
+>
+> - **用 DeepSeek 时**：每次搜索在发出前就先记上，用完后机器人直接不执行搜索。
+> - **用 Claude 时**：Claude 自带的搜索在 Anthropic 那边执行。每次请求发出前，机器人先占用这次最多能搜的次数（剩余次数不够时降到剩余次数），回复后把没用掉的退回，所以几个频道同时问也不会超；用完后把搜索工具撤掉。
+> - 如果这个频道的对话里已经有过 Claude 的搜索结果，工具撤不掉（撤掉的话请求可能被拒绝，暂停中的回复也必须带着它），这时机器人不会再发出能搜索的请求：新消息会让这个频道的对话重新开始（和聊满 40 条时一样）再回答；如果是回复到一半用完，她会停在那里：已经写出的部分照常发出，后面接一句今天的搜索次数用完了，这段回答以纯文字留在对话里。
+>
+> </details>
 
 **长消息和长活**
 
@@ -458,18 +462,19 @@ runtime\python -m pip install -U "yt-dlp[default]"
 3. **时间轴图**（仿游时）：左边是活动头图和名字，中间是从 3 天前到 14 天后的时间条（条里铺着头图，虚线是今天），右边是结束时间和剩余时间；3 天内结束标红，7 天内标黄。图里是北京时间。头图用的是游时同步时缓存的官方图，没有图的显示一个写着类型的色块。图在本地用 Pillow 画，不花钱，代码在 `app/calendar_image.py`。
    - 一个游戏不超过 10 行时只发一张图；超过的话按「快结束了（7 天内）」「明天开始」「还在进行」分开发，每张图前面有她的一句话，一张最多 8 行，再多就分成「（1/2）」「（2/2）」。没有内容的段落不发。
 
-<details>
-<summary><b>提醒的时间规则和设置</b></summary>
-
-- 都从明天 0 点算起，所以晚上发的时候不会列出已经结束的活动。一项活动在结束前的 3 个晚上都会被提到（`CALENDAR_END_DAYS`），「明天开始」看几天由 `CALENDAR_START_DAYS` 决定。
-- 活动和兑换商店在结束前 24 小时、1 小时各提醒一次（`CALENDAR_ALERTS=off` 可以关掉），只对公告写明的确切时间提醒。
-- 发过的记在 `data/calendar_sent.json`，重启不会重发；机器人没开时错过的，6 小时内会补发。
-- `CALENDAR_GAMES` 选哪些游戏；`CALENDAR_PING_ROLE_ID` 可以设一个身份组来 @（每批只 @ 一次，默认不 @）。
-- 开场白的台词在 `app/persona.py` 的 `cal_game_*`；游戏的叫法（罗德岛、塔卫二）和卡片颜色在 `app/cogs/calendar.py` 的 `GAME_NICKNAMES`、`GAME_COLORS`。
-- 部署者可以用 `/推送提醒` 把今天的提醒再发一次，不影响每晚的定时提醒。
-- 这些提醒都是预先写好的台词，**不调用付费 API**。
-
-</details>
+> [!NOTE]
+> <details>
+> <summary><b>点开看：提醒的时间规则和设置</b></summary>
+>
+> - 都从明天 0 点算起，所以晚上发的时候不会列出已经结束的活动。一项活动在结束前的 3 个晚上都会被提到（`CALENDAR_END_DAYS`），「明天开始」看几天由 `CALENDAR_START_DAYS` 决定。
+> - 活动和兑换商店在结束前 24 小时、1 小时各提醒一次（`CALENDAR_ALERTS=off` 可以关掉），只对公告写明的确切时间提醒。
+> - 发过的记在 `data/calendar_sent.json`，重启不会重发；机器人没开时错过的，6 小时内会补发。
+> - `CALENDAR_GAMES` 选哪些游戏；`CALENDAR_PING_ROLE_ID` 可以设一个身份组来 @（每批只 @ 一次，默认不 @）。
+> - 开场白的台词在 `app/persona.py` 的 `cal_game_*`；游戏的叫法（罗德岛、塔卫二）和卡片颜色在 `app/cogs/calendar.py` 的 `GAME_NICKNAMES`、`GAME_COLORS`。
+> - 部署者可以用 `/推送提醒` 把今天的提醒再发一次，不影响每晚的定时提醒。
+> - 这些提醒都是预先写好的台词，**不调用付费 API**。
+>
+> </details>
 
 **干员生日**：每晚的提醒发完后，如果当天有干员过生日，她最后再说一句，比如「对了——今天是战车、缪尔赛思、海霓的生日」；阿米娅生日那天有专门的一句。生日来自游戏里每位干员档案的【生日】一栏（通过公开的 ArknightsGameData 数据），约 375 位干员，没有公开生日的不算，异格干员和原干员算一个。仓库里带一份 `app/assets/operator_birthdays.json`，机器人每周自动重新下载一次（存到 `data/`），新干员会自己加进来。
 
@@ -517,63 +522,64 @@ runtime\python -m pip install -U "yt-dlp[default]"
 
 ## 开发
 
-<details>
-<summary><b>项目结构</b></summary>
-
-```
-启动普瑞赛斯.bat           平时启动：没有窗口，第一次会打开设置页面
-PRTS.bat                   调试启动：带命令行窗口
-.env.example               设置模板（设置页面保存后，旁边会多一个 .env）
-voices/example.json        说话模式的声音设置示例（只有路径和参数，不含模型和音频）
-app/                       程序本身
-  bot.py                   入口，加载命令并同步斜杠命令
-  tray.py                  托盘版入口（PRTS 快捷方式用的就是它）
-  wizard.py                设置页面：只在本机打开的网页，检查 token、列出服务器、写 .env
-  assets/wizard.html       设置页面的网页
-  assets/priestess.ico     托盘和快捷方式的图标
-  config.py                读取 .env 配置，定义主文件夹（data/、logs/ 都在主文件夹里）
-  persona.py               普瑞赛斯的台词（LINES）和聊天人设（CHAT_SYSTEM_PROMPT）
-  cogs/music.py            所有斜杠命令和语音频道事件
-  cogs/chat.py             @ 她聊天：DeepSeek / Claude、对话记录、控制音乐的工具
-  access.py                部署者是谁、可以待在哪些服务器（ALLOWED_GUILD_IDS）
-  moderation.py            不聊的话题：读主文件夹的 blocked_words.txt（没有时读 blocked_words.example.txt），拦下的记在 logs/blocked.log
-  stickers.py              表情包：触发词、编号和心情的对应
-  usage.py                 每日聊天额度和 token 统计（data/chat_usage.json）
-  weather.py               天气查询（Open-Meteo）
-  websearch.py             联网搜索和读网页（DeepSeek Search / Fetch API）
-  serp.py                  SerpApi 请求和每月额度
-  travel.py                机票（含价格日历、特价）和酒店（Google Flights / Hotels）
-  lookup.py                商品价格、识图、地图和路线（Google Shopping / Lens / Maps）
-  gamecal.py               游时：启动一次、同步、导出、关闭，以及读取活动数据
-  cogs/calendar.py         /活动、/同步活动、/推送提醒、频道提醒和每日简报
-  calendar_image.py        活动时间轴图（Pillow，仿游时）
-  cogs/balance.py          /余额：DeepSeek 余额和花费记录（data/balance.json）
-  cogs/speech.py           /语音模块、/说话：说话模式（读出聊天回复）
-  speech.py                GPT-SoVITS 的启动、关闭和合成（读 VOICE_CONFIG 指定的声音设置）
-  cogs/help.py             /帮助
-  birthdays.py             干员生日（assets/operator_birthdays.json，每周更新）
-  music/player.py          每个服务器的播放队列和播放循环
-  music/resolver.py        根据链接或平台选择对应的音源
-  music/track.py           Track / Stream 数据结构
-  music/sources/youtube.py   YouTube（yt-dlp）
-  music/sources/bilibili.py  Bilibili（Web API + WBI 签名）
-  music/sources/netease.py   网易云音乐（eapi 接口）
-  music/sources/siren.py     塞壬唱片（官方接口，本地搜索）
-  music/sources/links.py     展开 b23.tv、163cn.tv 短链接（每一跳都必须留在平台自己的网站上）
-  siren_lore.py            塞壬唱片歌曲对应的角色、活动，和她的专属台词
-  requirements.txt         依赖；requirements.lock 是测试通过时的确切版本
-docs/images/               README 用的图（不打进便携包）
-tools/build_portable.py    打便携包：官方的嵌入版 Python + requirements.lock 里的库 + 程序文件
-tools/wizard_demo.py       不用 token 预览设置页面（Discord 和密钥检查都是假的）
-.github/workflows/         发布 Release 时自动打便携包并挂到 Release 上
-.github/SECURITY.md        安全问题怎么报告
-```
-
-运行之后，主文件夹里还会出现 `.env`、`data/`、`logs/` 和 `PRTS` 快捷方式；便携包还多一个 `runtime/`（自带的 Python）。
-
-**打便携包**：用 Python 3.14 运行 `python tools/build_portable.py --version v1.2.3 --test`，结果在 `build/` 里。只打包 Git 认识的文件，`.env`、`data/`、`logs/` 不会进去。
-
-</details>
+> [!NOTE]
+> <details>
+> <summary><b>点开看：项目结构</b></summary>
+>
+> ```
+> 启动普瑞赛斯.bat           平时启动：没有窗口，第一次会打开设置页面
+> PRTS.bat                   调试启动：带命令行窗口
+> .env.example               设置模板（设置页面保存后，旁边会多一个 .env）
+> voices/example.json        说话模式的声音设置示例（只有路径和参数，不含模型和音频）
+> app/                       程序本身
+>   bot.py                   入口，加载命令并同步斜杠命令
+>   tray.py                  托盘版入口（PRTS 快捷方式用的就是它）
+>   wizard.py                设置页面：只在本机打开的网页，检查 token、列出服务器、写 .env
+>   assets/wizard.html       设置页面的网页
+>   assets/priestess.ico     托盘和快捷方式的图标
+>   config.py                读取 .env 配置，定义主文件夹（data/、logs/ 都在主文件夹里）
+>   persona.py               普瑞赛斯的台词（LINES）和聊天人设（CHAT_SYSTEM_PROMPT）
+>   cogs/music.py            所有斜杠命令和语音频道事件
+>   cogs/chat.py             @ 她聊天：DeepSeek / Claude、对话记录、控制音乐的工具
+>   access.py                部署者是谁、可以待在哪些服务器（ALLOWED_GUILD_IDS）
+>   moderation.py            不聊的话题：读主文件夹的 blocked_words.txt（没有时读 blocked_words.example.txt），拦下的记在 logs/blocked.log
+>   stickers.py              表情包：触发词、编号和心情的对应
+>   usage.py                 每日聊天额度和 token 统计（data/chat_usage.json）
+>   weather.py               天气查询（Open-Meteo）
+>   websearch.py             联网搜索和读网页（DeepSeek Search / Fetch API）
+>   serp.py                  SerpApi 请求和每月额度
+>   travel.py                机票（含价格日历、特价）和酒店（Google Flights / Hotels）
+>   lookup.py                商品价格、识图、地图和路线（Google Shopping / Lens / Maps）
+>   gamecal.py               游时：启动一次、同步、导出、关闭，以及读取活动数据
+>   cogs/calendar.py         /活动、/同步活动、/推送提醒、频道提醒和每日简报
+>   calendar_image.py        活动时间轴图（Pillow，仿游时）
+>   cogs/balance.py          /余额：DeepSeek 余额和花费记录（data/balance.json）
+>   cogs/speech.py           /语音模块、/说话：说话模式（读出聊天回复）
+>   speech.py                GPT-SoVITS 的启动、关闭和合成（读 VOICE_CONFIG 指定的声音设置）
+>   cogs/help.py             /帮助
+>   birthdays.py             干员生日（assets/operator_birthdays.json，每周更新）
+>   music/player.py          每个服务器的播放队列和播放循环
+>   music/resolver.py        根据链接或平台选择对应的音源
+>   music/track.py           Track / Stream 数据结构
+>   music/sources/youtube.py   YouTube（yt-dlp）
+>   music/sources/bilibili.py  Bilibili（Web API + WBI 签名）
+>   music/sources/netease.py   网易云音乐（eapi 接口）
+>   music/sources/siren.py     塞壬唱片（官方接口，本地搜索）
+>   music/sources/links.py     展开 b23.tv、163cn.tv 短链接（每一跳都必须留在平台自己的网站上）
+>   siren_lore.py            塞壬唱片歌曲对应的角色、活动，和她的专属台词
+>   requirements.txt         依赖；requirements.lock 是测试通过时的确切版本
+> docs/images/               README 用的图（不打进便携包）
+> tools/build_portable.py    打便携包：官方的嵌入版 Python + requirements.lock 里的库 + 程序文件
+> tools/wizard_demo.py       不用 token 预览设置页面（Discord 和密钥检查都是假的）
+> .github/workflows/         发布 Release 时自动打便携包并挂到 Release 上
+> .github/SECURITY.md        安全问题怎么报告
+> ```
+>
+> 运行之后，主文件夹里还会出现 `.env`、`data/`、`logs/` 和 `PRTS` 快捷方式；便携包还多一个 `runtime/`（自带的 Python）。
+>
+> **打便携包**：用 Python 3.14 运行 `python tools/build_portable.py --version v1.2.3 --test`，结果在 `build/` 里。只打包 Git 认识的文件，`.env`、`data/`、`logs/` 不会进去。
+>
+> </details>
 
 **添加新平台**：在 `app/music/sources/` 里写一个类，实现 `matches_url`、`search`、`from_url`、`resolve`、`close`，再在 `app/music/resolver.py` 和 `app/cogs/music.py` 的 `SOURCE_CHOICES` 里注册就行。
 
